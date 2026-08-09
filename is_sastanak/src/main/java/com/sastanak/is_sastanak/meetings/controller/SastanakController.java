@@ -1,5 +1,6 @@
 package com.sastanak.is_sastanak.meetings.controller;
 
+import com.sastanak.is_sastanak.meetings.model.Prisustvo;
 import com.sastanak.is_sastanak.meetings.model.Sastanak;
 import com.sastanak.is_sastanak.meetings.model.SastanakUcesnik;
 import com.sastanak.is_sastanak.meetings.service.SastanakService;
@@ -33,5 +34,13 @@ public class SastanakController {
     @GetMapping("/{sastanakId}/ucesnici")
     public List<SastanakUcesnik> getUcesnici(@PathVariable Integer sastanakId){
         return sastanakService.getUcesnici(sastanakId);
+    }
+    @PostMapping("/evidentiraj-prisustvo")
+    public Prisustvo evidentirajPrisustvo(@RequestBody PrisustvoZahtev zahtev){
+        return sastanakService.evidentirajPrisustvo(zahtev);
+    }
+    @GetMapping("/{sastanakId}/prisustvo")
+    public List<Prisustvo> getPrisustvo(@PathVariable Integer sastanakId){
+        return sastanakService.getPrisustvo(sastanakId);
     }
 }

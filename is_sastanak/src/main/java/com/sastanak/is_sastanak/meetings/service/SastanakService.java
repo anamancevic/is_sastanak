@@ -1,13 +1,11 @@
 package com.sastanak.is_sastanak.meetings.service;
 
+import com.sastanak.is_sastanak.meetings.controller.PrisustvoZahtev;
 import com.sastanak.is_sastanak.meetings.controller.TackaZahtev;
 import com.sastanak.is_sastanak.meetings.controller.UcesnikZahtev;
 import com.sastanak.is_sastanak.meetings.controller.ZakazivanjeZahtev;
 import com.sastanak.is_sastanak.meetings.model.*;
-import com.sastanak.is_sastanak.meetings.repository.KategorijaSastankaRepository;
-import com.sastanak.is_sastanak.meetings.repository.SastanakRepository;
-import com.sastanak.is_sastanak.meetings.repository.SastanakUcesnikRepository;
-import com.sastanak.is_sastanak.meetings.repository.TackaDnevnogRedaRepository;
+import com.sastanak.is_sastanak.meetings.repository.*;
 import com.sastanak.is_sastanak.users.model.Korisnik;
 import com.sastanak.is_sastanak.users.model.OrganizacionaCelina;
 import com.sastanak.is_sastanak.users.repository.KorisnikRepository;
@@ -24,19 +22,22 @@ public class SastanakService {
     private final OrganizacionaCelinaRepository organizacionaCelinaRepository;
     private final TackaDnevnogRedaRepository tackaDnevnogRedaRepository;
     private final SastanakUcesnikRepository sastanakUcesnikRepository;
+    private final PrisustvoRepository prisustvoRepository;
 
     public SastanakService(SastanakRepository sastanakRepository,
                            KategorijaSastankaRepository kategorijaSastankaRepository,
                            KorisnikRepository korisnikRepository,
                            OrganizacionaCelinaRepository organizacionaCelinaRepository,
                            TackaDnevnogRedaRepository tackaDnevnogRedaRepository,
-                           SastanakUcesnikRepository sastanakUcesnikRepository) {
+                           SastanakUcesnikRepository sastanakUcesnikRepository,
+                           PrisustvoRepository prisustvoRepository) {
         this.sastanakRepository = sastanakRepository;
         this.kategorijaSastankaRepository = kategorijaSastankaRepository;
         this.korisnikRepository = korisnikRepository;
         this.organizacionaCelinaRepository = organizacionaCelinaRepository;
         this.tackaDnevnogRedaRepository = tackaDnevnogRedaRepository;
         this.sastanakUcesnikRepository = sastanakUcesnikRepository;
+        this.prisustvoRepository = prisustvoRepository;
     }
 
     public Sastanak zakaziSastanak(ZakazivanjeZahtev zahtev){
@@ -95,6 +96,23 @@ public class SastanakService {
         return sastanakUcesnikRepository.findBySastanakId(sastanakId);
     }
 
+public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
+        Sastanak sastanak = sastanakRepository.findById(zahtev.getSastanakId())
+                .orElseThrow(()-> new RuntimeException("Sastanak ne postoji!"));
 
+        Korisnik korisnik = korisnikRepository.findById(zahtev.getKorisnikId())
+                .orElseThrow(()->new RuntimeException("Korisnik ne postoji!"));
 
+        Prisustvo prisustvo = new Prisustvo();
+        prisustvo.setSastanak(sastanak);
+        prisustvo.setKorisnik(korisnik);
+        prisustvo.setStatus(zahtev.getStatus());
+        prisustvo.setPlaniran(true);
+
+        return prisustvoRepository.save(prisustvo);
+}
+
+    public List<Prisustvo> getPrisustvo(Integer sastanakId) {
+        return prisustvoRepository.findBySastanakId(sastanakId);
+    }
 }
