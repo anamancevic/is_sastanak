@@ -60,60 +60,60 @@ function Ucesnici() {
         }
         ;
     }
-    return(
+    return (
         <div className="pozadina">
             <div className="kartica">
                 <h2 className="naslov">
                     Ucesnici sastanka
                 </h2>
-            {/* padajuca lista sastanaka */}
-            <select
-            value={sastanakId}
-            onChange={(e)=> {
-                setSastanakId(e.target.value);
-                ucitajUcesnike(e.target.value);
-            }}
-            className="polje">
+                {/* padajuca lista sastanaka */}
+                <select
+                    value={sastanakId}
+                    onChange={(e) => {
+                        setSastanakId(e.target.value);
+                        ucitajUcesnike(e.target.value);
+                    }}
+                    className="polje">
                     <option value="">--Izaberi sastanak--</option>
-                    {sastanci.map((s)=> (
+                    {sastanci.map((s) => (
                         <option key={s.id} value={s.id}>{s.tema}</option>
                     ))}
-            </select>
-           
-            <h3 className="podnaslov">Trenutni ucesnici</h3>
-             {/* spisak svih ucesnika tog sastanka */}
-             {ucesnici.length==0 ? (
-                <p className="tekst">Nema ucesnika sastanka</p>) :
-                (<ul style={{ marginBottom: "16px", paddingLeft: "20px" }}>
-                        {ucesnici.map((u)=>(
+                </select>
+
+                <h3 className="podnaslov">Trenutni ucesnici</h3>
+                {/* spisak svih ucesnika tog sastanka */}
+                {ucesnici.length == 0 ? (
+                    <p className="tekst">Nema ucesnika sastanka</p>) :
+                    (<ul style={{ marginBottom: "16px", paddingLeft: "20px" }}>
+                        {ucesnici.map((u) => (
                             <li key={u.id} style={{ color: "#54463d", marginBottom: "4px" }}>
                                 {u.korisnik.ime} {u.korisnik.prezime}
                             </li>
                         ))}
-                </ul>
-             )}
-             <h3 className="podnaslov">Dodaj novog ucesnika</h3>
-             {/* dodavanje novog ucesnika*/}
-             <select value={korisnikId}
-             onChange={(e)=> setKorisnikId(e.target.value)}
-             className="polje">
-                <option value="">-- Izaberi korisnika --</option>
-                {korisnici.map((k)=> (
-                    <option key = {k.id}value={k.id}>
-                        {k.ime} {k.prezime}
-                    </option>
-                ))}
-             </select>
+                    </ul>
+                    )}
+                <h3 className="podnaslov">Dodaj novog ucesnika</h3>
+                {/* dodavanje novog ucesnika*/}
+                <select value={korisnikId}
+                    onChange={(e) => setKorisnikId(e.target.value)}
+                    className="polje">
+                    <option value="">-- Izaberi korisnika --</option>
+                    {korisnici.map((k) => (
+                        <option key={k.id} value={k.id}>
+                            {k.ime} {k.prezime}
+                        </option>
+                    ))}
+                </select>
 
-             <button onClick={dodajUcesnika} 
-             className="dugme"> Dodaj učesnika</button>
+                <button onClick={dodajUcesnika}
+                    className="dugme"> Dodaj učesnika</button>
 
                 {poruka && (
                     <p className="tekst">{poruka}</p>
                 )}
 
-                <button onClick={()=> navigate("/dashboard")} 
-                className="dugme">
+                <button onClick={() => navigate("/dashboard")}
+                    className="dugme">
                     Nazad
                 </button>
             </div>

@@ -45,8 +45,8 @@ function Dashboard() {
           Učesnici sastanka
         </button>
         {/*Dugme za evidentiranje prisustva*/}
-        <button onClick={()=>navigate("/prisustvo")} 
-        className="dugme">
+        <button onClick={() => navigate("/prisustvo")}
+          className="dugme">
           Evidentiranje prisustva
         </button>
         {/* Dugme za odjavu */}

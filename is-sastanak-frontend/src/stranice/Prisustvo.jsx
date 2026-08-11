@@ -88,29 +88,27 @@ function Prisustvo() {
                                 backgroundColor: "#faf7f3",
                                 borderRadius: "6px"
                             }}>
-                                <span style={{ color: "#54463d" }}>
-                                    {u.korisnik.ime} {u.korisnik.prezime}
-                                </span>
-                                <div style={{ display: "flex", gap: "6px" }}>
-                                    <button onClick={()=> evidentiraj(u.korisnik.id, "PRISUTAN")}
-                                        style={{ padding: "6px 12px", backgroundColor: "#7a8b6f",
-                                         color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }}>
-                                        Prisutan
-                                    </button>
-                                     <button onClick={()=> evidentiraj(u.korisnik.id, "ODSUTAN")}
-                                        style={{ padding: "6px 12px", backgroundColor: "#7a8b6f",
-                                         color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }}>
-                                        Odsutan
-                                    </button>
-                                </div>
+                            <span style={{ color: "#54463d" }}>
+                                {u.korisnik.ime} {u.korisnik.prezime}
+                            </span>
+                            <div style={{ display: "flex", gap: "6px" }}>
+                                <button onClick={() => evidentiraj(u.korisnik.id, "PRISUTAN")}
+                                    className="dugme2">
+                                    Prisutan
+                                </button>
+                                <button onClick={() => evidentiraj(u.korisnik.id, "ODSUTAN")}
+                                    className="dugme2">
+                                    Odsutan
+                                </button>
                             </div>
+                        </div>
                     ))
                 )}
-                {poruka && <p 
-                className="tekst"
-                style={{ textAlign: "center" }}>
+                {poruka && <p
+                    className="tekst"
+                    style={{ textAlign: "center" }}>
                     {poruka}
-                    </p>}
+                </p>}
 
                 <button onClick={() => navigate("/dashboard")} className="dugme">Nazad</button>
             </div>
