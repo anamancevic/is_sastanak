@@ -6,6 +6,7 @@ import DodelaUloge from "./stranice/DodelaUloge";
 import Sastanci from "./stranice/Sastanci";
 import ZakazivanjeSastanka from "./stranice/ZakazivanjeSastanka";
 import Ucesnici from "./stranice/Ucesnici";
+import Prisustvo from "./stranice/Prisustvo";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/sastanci" element= {<Sastanci/>}/>
         <Route path="/zakazivanje-sastanka" element= {<ZakazivanjeSastanka/>}/>
         <Route path="/ucesnici" element= {<Ucesnici/>}/>
+        <Route path="/prisustvo" element= {<Prisustvo/>}/>
       </Routes>
     </BrowserRouter>
   );

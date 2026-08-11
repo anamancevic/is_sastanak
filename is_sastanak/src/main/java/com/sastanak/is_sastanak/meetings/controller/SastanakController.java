@@ -26,7 +26,7 @@ public class SastanakController {
         return sastanakService.getSviSastanci();
     }
 
-    @PostMapping("/dodaj_ucesnika")
+    @PostMapping("/dodaj-ucesnika")
     public SastanakUcesnik dodajUcesnika(@RequestBody UcesnikZahtev zahtev){
         return sastanakService.dodajUcesnika(zahtev);
     }

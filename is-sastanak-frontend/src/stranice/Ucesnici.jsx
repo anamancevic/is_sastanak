@@ -105,7 +105,8 @@ function Ucesnici() {
                 ))}
              </select>
 
-             <button className="dugme"> Dodaj učesnika</button>
+             <button onClick={dodajUcesnika} 
+             className="dugme"> Dodaj učesnika</button>
 
                 {poruka && (
                     <p className="tekst">{poruka}</p>

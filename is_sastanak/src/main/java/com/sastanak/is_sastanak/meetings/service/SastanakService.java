@@ -103,7 +103,8 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
         Korisnik korisnik = korisnikRepository.findById(zahtev.getKorisnikId())
                 .orElseThrow(()->new RuntimeException("Korisnik ne postoji!"));
 
-        Prisustvo prisustvo = new Prisustvo();
+        Prisustvo prisustvo = prisustvoRepository.findBySastanakIdAndKorisnikId(sastanak.getId(), korisnik.getId())
+                .orElse( new Prisustvo());
         prisustvo.setSastanak(sastanak);
         prisustvo.setKorisnik(korisnik);
         prisustvo.setStatus(zahtev.getStatus());

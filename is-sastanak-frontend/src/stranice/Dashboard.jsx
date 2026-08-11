@@ -44,6 +44,11 @@ function Dashboard() {
           className="dugme">
           Učesnici sastanka
         </button>
+        {/*Dugme za evidentiranje prisustva*/}
+        <button onClick={()=>navigate("/prisustvo")} 
+        className="dugme">
+          Evidentiranje prisustva
+        </button>
         {/* Dugme za odjavu */}
         <button onClick={() => { localStorage.removeItem("korisnik"); navigate("/"); }}
           className="dugme">
