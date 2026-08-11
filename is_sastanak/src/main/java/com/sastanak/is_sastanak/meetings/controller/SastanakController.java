@@ -3,6 +3,7 @@ package com.sastanak.is_sastanak.meetings.controller;
 import com.sastanak.is_sastanak.meetings.model.Prisustvo;
 import com.sastanak.is_sastanak.meetings.model.Sastanak;
 import com.sastanak.is_sastanak.meetings.model.SastanakUcesnik;
+import com.sastanak.is_sastanak.meetings.model.TackaDnevnogReda;
 import com.sastanak.is_sastanak.meetings.service.SastanakService;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,5 +43,10 @@ public class SastanakController {
     @GetMapping("/{sastanakId}/prisustvo")
     public List<Prisustvo> getPrisustvo(@PathVariable Integer sastanakId){
         return sastanakService.getPrisustvo(sastanakId);
+    }
+
+    @GetMapping("/{sastanakId}/tacke")
+    public List<TackaDnevnogReda> getTacke(@PathVariable Integer sastanakId){
+        return sastanakService.getTacke(sastanakId);
     }
 }

@@ -116,4 +116,7 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
     public List<Prisustvo> getPrisustvo(Integer sastanakId) {
         return prisustvoRepository.findBySastanakId(sastanakId);
     }
+    public List<TackaDnevnogReda> getTacke(Integer sastanakId){
+        return tackaDnevnogRedaRepository.findBySastanakId(sastanakId);
+    }
 }

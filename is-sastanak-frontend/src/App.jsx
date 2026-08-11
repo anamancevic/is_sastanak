@@ -7,6 +7,7 @@ import Sastanci from "./stranice/Sastanci";
 import ZakazivanjeSastanka from "./stranice/ZakazivanjeSastanka";
 import Ucesnici from "./stranice/Ucesnici";
 import Prisustvo from "./stranice/Prisustvo";
+import Predlozi from "./stranice/Predlozi";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/zakazivanje-sastanka" element= {<ZakazivanjeSastanka/>}/>
         <Route path="/ucesnici" element= {<Ucesnici/>}/>
         <Route path="/prisustvo" element= {<Prisustvo/>}/>
+        <Route path="/predlozi" element= {<Predlozi/>}/>
       </Routes>
     </BrowserRouter>
   );
