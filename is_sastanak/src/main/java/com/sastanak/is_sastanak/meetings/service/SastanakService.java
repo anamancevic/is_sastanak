@@ -1,9 +1,6 @@
 package com.sastanak.is_sastanak.meetings.service;
 
-import com.sastanak.is_sastanak.meetings.controller.PrisustvoZahtev;
-import com.sastanak.is_sastanak.meetings.controller.TackaZahtev;
-import com.sastanak.is_sastanak.meetings.controller.UcesnikZahtev;
-import com.sastanak.is_sastanak.meetings.controller.ZakazivanjeZahtev;
+import com.sastanak.is_sastanak.meetings.controller.*;
 import com.sastanak.is_sastanak.meetings.model.*;
 import com.sastanak.is_sastanak.meetings.repository.*;
 import com.sastanak.is_sastanak.users.model.Korisnik;
@@ -118,5 +115,14 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
     }
     public List<TackaDnevnogReda> getTacke(Integer sastanakId){
         return tackaDnevnogRedaRepository.findBySastanakId(sastanakId);
+    }
+    public Sastanak izmeniStaus(Integer sastanakId, IzmenaStatusaZahtev zahtev){
+        Sastanak sastanak = sastanakRepository.findById(sastanakId)
+                .orElseThrow(()-> new RuntimeException("Sastanak ne postoji!"));
+
+        sastanak.setStatus(zahtev.getStatus());
+        sastanak.setZakljucak(zahtev.getZakljucak());
+
+        return sastanakRepository.save(sastanak);
     }
 }

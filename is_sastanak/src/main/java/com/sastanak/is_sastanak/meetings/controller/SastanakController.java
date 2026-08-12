@@ -49,4 +49,10 @@ public class SastanakController {
     public List<TackaDnevnogReda> getTacke(@PathVariable Integer sastanakId){
         return sastanakService.getTacke(sastanakId);
     }
+
+    @PutMapping("/{sastanakId}/status")
+    public Sastanak izmeniStatus(@PathVariable Integer sastanakId,
+                                 @RequestBody IzmenaStatusaZahtev zahtev){
+        return sastanakService.izmeniStaus(sastanakId, zahtev);
+    }
 }
