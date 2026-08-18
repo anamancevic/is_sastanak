@@ -1,11 +1,51 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+function TackaIzvestaj({tacka}) {
+    const[predlozi, setPredlozi] = useState([]);
+
+    useEffect(()=> {
+        async function ucitaj() {
+            try {
+                const odgovor = await fetch("http://localhost:8080/api/predlozi/tacka/" + tacka.id);
+                setPredlozi(await odgovor.json());
+            } catch (greska) {
+                console.log("Greska pri ucitavanju predloga!");
+            }
+        }
+        ucitaj();
+    }, []);
+
+    return(
+        <div style={{ marginBottom: "12px" }}>
+            <p className="tekst" style={{ fontWeight: "bold", marginBottom: "4px" }}>
+            {tacka.redniBroj}.  {tacka.sadrzaj}
+            </p>
+            {predlozi.length === 0 ? (
+                <p className="tekst">Nema predloga</p>
+            ): (
+                <ul style={{ paddingLeft: "30px", listStyle: "none" }}>
+                    {predlozi.map((p)=>(
+                        <li key={p.id} 
+                        style={{ color: "#54463d", fontSize: "14px", marginBottom: "3px" }}>
+                            {p.tekst} {p.korisnik ? "(" + p.korisnik.ime 
+                            + " " + p.korisnik.prezime + ")" : ""}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+}
+
 function Izvestaji() {
     const navigate = useNavigate();
 
     const [sastanci, setSastanci] = useState([]);
+    const [tacke, setTacke] = useState([]);
     const [izabraniSastanak, setIzabraniSastanak] = useState(null);
+    const [prikaziPotpuni, setPrikaziPotpuni] = useState(false);
+    const [prisustvo, setPrisustvo] = useState([]);
 
     useEffect(() => {
         async function ucitaj() {
@@ -22,6 +62,25 @@ function Izvestaji() {
     function izaberiSastanak(id) {
         const sastanak = sastanci.find((s) => s.id === parseInt(id));
         setIzabraniSastanak(sastanak);
+        setPrikaziPotpuni(false);
+
+    }
+
+    async function ucitajPotpuni() {
+        if (!izabraniSastanak) {
+            return
+        }
+        try {
+            const t = await fetch("http://localhost:8080/api/sastanci/" + izabraniSastanak.id + "/tacke");
+            setTacke(await t.json());
+
+            const p = await fetch("http://localhost:8080/api/sastanci/" + izabraniSastanak.id + "/prisustvo");
+            setPrisustvo(await p.json());
+
+            setPrikaziPotpuni(true);
+        } catch (greska) {
+            console.log("Greska pri ucitavanju potpunog izvestaja!");
+        }
     }
 
     return (
@@ -66,9 +125,52 @@ function Izvestaji() {
                                 <b>Zaključak:</b> {izabraniSastanak.zakljucak}
                             </p>
                         )}
+                        <button
+                            onClick={() => {
+                                if (prikaziPotpuni) {
+                                    setPrikaziPotpuni(false);
+                                } else {
+                                    ucitajPotpuni();
+                                }
+                            }}
+                            className="dugme">
+                            {prikaziPotpuni ? "Sakrij potpuni izveštaj" : "Prikazi potpuni izveštaj"}
+                        </button>
+                        {prikaziPotpuni && (
+                            
+                            <div style={{ marginTop: "16px" }}>
+                               
+                                <h3 className="podnaslov">
+                                    Tacke dnevnog reda
+                                </h3>
+                                {tacke.length === 0 ? (
+                                    <p className="tekst">Nema tačaka</p>
+                                ) : (
+                                    tacke.map((t) => (
+                                       <TackaIzvestaj key={t.id} tacka={t}/>
+                                    ))
+                                )}
+                                <h3 className="podnaslov">Prisustvo</h3>
+                                {prisustvo.length === 0 ? (
+                                    <p className="tekst">Nema evidentiranog prisustva</p>
+                                ) : (
+                                    <ul style={{ paddingLeft: "20px", listStyle: "none" }}>
+                                        {prisustvo.map((p) => (
+                                            <li key={p.id} 
+                                            style={{ color: "#54463d", marginBottom: "4px" }}>
+                                                {p.korisnik ? p.korisnik.ime + " " 
+                                                + p.korisnik.prezime : "Nepoznat"}
+                                                 — {p.status}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+
+                        )}
                     </div>
                 )}
-                <button onClick={()=>navigate("/dashboard")} className="dugme">Nazad</button>
+                <button onClick={() => navigate("/dashboard")} className="dugme">Nazad</button>
             </div>
         </div>
     )
