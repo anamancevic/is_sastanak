@@ -125,4 +125,7 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
 
         return sastanakRepository.save(sastanak);
     }
+    public List<Sastanak> getSastanciPoCelini(Integer celinaId){
+        return sastanakRepository.findByOrganizacionaCelinaId(celinaId);
+    }
 }

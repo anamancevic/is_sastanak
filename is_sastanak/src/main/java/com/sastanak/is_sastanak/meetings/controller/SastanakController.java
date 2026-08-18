@@ -55,4 +55,8 @@ public class SastanakController {
                                  @RequestBody IzmenaStatusaZahtev zahtev){
         return sastanakService.izmeniStaus(sastanakId, zahtev);
     }
+    @GetMapping("/celina/{celinaId}")
+    public  List<Sastanak> getSastanciPoCelini(@PathVariable Integer celinaId){
+        return sastanakService.getSastanciPoCelini(celinaId);
+    }
 }
