@@ -59,4 +59,8 @@ public class SastanakController {
     public  List<Sastanak> getSastanciPoCelini(@PathVariable Integer celinaId){
         return sastanakService.getSastanciPoCelini(celinaId);
     }
+    @GetMapping("/sumirani-broj-ucesca")
+        public List<SumiraniOdgovor> getSumiraniBrojUcesca(){
+        return sastanakService.getSumiraniBrojUcesca();
+        }
 }

@@ -9,6 +9,7 @@ import com.sastanak.is_sastanak.users.repository.KorisnikRepository;
 import com.sastanak.is_sastanak.users.repository.OrganizacionaCelinaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -127,5 +128,18 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
     }
     public List<Sastanak> getSastanciPoCelini(Integer celinaId){
         return sastanakRepository.findByOrganizacionaCelinaId(celinaId);
+    }
+    public List<SumiraniOdgovor> getSumiraniBrojUcesca(){
+        List<Object[]> rezultati = prisustvoRepository.brojUcescaPoKorisniku();
+        List<SumiraniOdgovor> lista = new ArrayList<>();
+
+        for (Object[] red : rezultati){
+            Integer korisnikId = (Integer) red[0];
+            String ime = (String) red[1];
+            String prezime = (String) red[2];
+            Long broj = (Long) red[3];
+            lista.add(new SumiraniOdgovor(korisnikId, ime, prezime, broj));
+        }
+        return lista;
     }
 }
