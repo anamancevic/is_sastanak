@@ -74,13 +74,18 @@ function SastanakKartica({sastanak}) {
 
 function Sastanci() {
     const navigate = useNavigate();
+    const[celine, setCeline] = useState([]);
     const[sastanci, setSastanci] = useState([]);
+    const[izabranaCelina, setIzabranaCelina] = useState("");
 
     useEffect(() => {
         async function ucitajSastanke() {
              try {
-            const odgovor = await fetch("http://localhost:8080/api/sastanci");
-            const podaci = await odgovor.json();
+            const s = await fetch("http://localhost:8080/api/sastanci");
+            setSastanci(await s.json());
+
+            const c = await fetch("http://localhost:8080/api/celine");
+            setCeline(await c.json());
             setSastanci(podaci);
         } catch (greska) {
             console.log("Greska pri ucitavanju sastanka!");
@@ -88,12 +93,39 @@ function Sastanci() {
         ucitajSastanke();
     }, []);
     
+    async function filtrirajPoCelini(celinaId) {
+        setIzabranaCelina(celinaId);
+        try {
+            let url;
+            if (celinaId === "") {
+                url = "http://localhost:8080/api/sastanci";  
+            }
+            else{
+                url = "http://localhost:8080/api/sastanci/celina/" + celinaId;
+            }
+            const odgovor = await fetch(url);
+            setSastanci(await odgovor.json());
+        } catch (greska) {
+            console.log("Greska pri filtriranju!");
+        }
+    }
+
     return(
         <div className="pozadina">
                 <div className="kartica" style={{width: "80%", maxWidth: "1000px" }}>
                 <h2 className="naslov">
                 Sastanci
                 </h2>
+                <select value={izabranaCelina}
+                onChange={(e)=> filtrirajPoCelini(e.target.value)}
+                className="polje"
+                style={{ maxWidth: "300px", marginBottom: "20px" }}>
+                    <option value="">--Izaberi celinu--</option>
+                    {celine.map((c)=> (
+                        <option key={c.id}
+                        value={c.id}>{c.naziv}</option>
+                    ))}
+                </select>
                 {sastanci.map((s)=>(
                    <SastanakKartica key={s.id} sastanak={s}/>
                 ))}
