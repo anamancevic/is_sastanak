@@ -1,5 +1,6 @@
 package com.sastanak.is_sastanak.users.service;
 
+import com.sastanak.is_sastanak.notifications.service.ObavestenjaService;
 import com.sastanak.is_sastanak.users.controller.DodelaUlogeZahtev;
 import com.sastanak.is_sastanak.users.controller.RegistracijaZahtev;
 import com.sastanak.is_sastanak.users.model.Korisnik;
@@ -22,17 +23,19 @@ public class KorisnikService {
     private final PasswordEncoder passwordEncoder;
     private final UlogaRepository ulogaRepository;
     private final KorisnikUlogaRepository korisnikUlogaRepository;
+    private final ObavestenjaService obavestenjaService;
 
     public KorisnikService(KorisnikRepository korisnikRepository,
                            OrganizacionaCelinaRepository organizacionaCelinaRepository,
-                           PasswordEncoder passwordEncoder,
-                           UlogaRepository ulogaRepository,
-                           KorisnikUlogaRepository korisnikUlogaRepository) {
+                           PasswordEncoder passwordEncoder, UlogaRepository ulogaRepository,
+                           KorisnikUlogaRepository korisnikUlogaRepository,
+                           ObavestenjaService obavestenjaService) {
         this.korisnikRepository = korisnikRepository;
         this.organizacionaCelinaRepository = organizacionaCelinaRepository;
         this.passwordEncoder = passwordEncoder;
         this.ulogaRepository = ulogaRepository;
         this.korisnikUlogaRepository = korisnikUlogaRepository;
+        this.obavestenjaService = obavestenjaService;
     }
 
     public Korisnik registruj(RegistracijaZahtev zahtev) {
@@ -72,6 +75,12 @@ public class KorisnikService {
         korisnikUloga.setOrganizacionaCelina(celina);
         korisnikUloga.setTipUloge(zahtev.getTip());
         korisnikUloga.setNapomena(zahtev.getNapomena());
+
+        obavestenjaService.napraviObavestenje(
+                korisnik.getId(),
+                null,
+                "Dodeljena Vam je uloga u sistemu!"
+        );
 
         return korisnikUlogaRepository.save(korisnikUloga);
     }

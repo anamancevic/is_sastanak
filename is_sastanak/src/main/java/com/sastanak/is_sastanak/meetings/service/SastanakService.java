@@ -3,6 +3,8 @@ package com.sastanak.is_sastanak.meetings.service;
 import com.sastanak.is_sastanak.meetings.controller.*;
 import com.sastanak.is_sastanak.meetings.model.*;
 import com.sastanak.is_sastanak.meetings.repository.*;
+import com.sastanak.is_sastanak.notifications.repository.ObavestenjeRepository;
+import com.sastanak.is_sastanak.notifications.service.ObavestenjaService;
 import com.sastanak.is_sastanak.users.model.Korisnik;
 import com.sastanak.is_sastanak.users.model.OrganizacionaCelina;
 import com.sastanak.is_sastanak.users.repository.KorisnikRepository;
@@ -21,6 +23,7 @@ public class SastanakService {
     private final TackaDnevnogRedaRepository tackaDnevnogRedaRepository;
     private final SastanakUcesnikRepository sastanakUcesnikRepository;
     private final PrisustvoRepository prisustvoRepository;
+    private final ObavestenjaService obavestenjaService;
 
     public SastanakService(SastanakRepository sastanakRepository,
                            KategorijaSastankaRepository kategorijaSastankaRepository,
@@ -28,7 +31,8 @@ public class SastanakService {
                            OrganizacionaCelinaRepository organizacionaCelinaRepository,
                            TackaDnevnogRedaRepository tackaDnevnogRedaRepository,
                            SastanakUcesnikRepository sastanakUcesnikRepository,
-                           PrisustvoRepository prisustvoRepository) {
+                           PrisustvoRepository prisustvoRepository,
+                           ObavestenjaService obavestenjaService) {
         this.sastanakRepository = sastanakRepository;
         this.kategorijaSastankaRepository = kategorijaSastankaRepository;
         this.korisnikRepository = korisnikRepository;
@@ -36,6 +40,7 @@ public class SastanakService {
         this.tackaDnevnogRedaRepository = tackaDnevnogRedaRepository;
         this.sastanakUcesnikRepository = sastanakUcesnikRepository;
         this.prisustvoRepository = prisustvoRepository;
+        this.obavestenjaService = obavestenjaService;
     }
 
     public Sastanak zakaziSastanak(ZakazivanjeZahtev zahtev){
@@ -87,7 +92,15 @@ public class SastanakService {
         ucesnik.setKorisnik(korisnik);
         ucesnik.setPlaniran(true);
 
-        return sastanakUcesnikRepository.save(ucesnik);
+        SastanakUcesnik sacuvan = sastanakUcesnikRepository.save(ucesnik);
+
+        obavestenjaService.napraviObavestenje(
+                korisnik.getId(),
+                null,
+                "Dodati ste kao ucesnik na sastanak: " + sastanak.getTema()
+        );
+
+        return sacuvan;
     }
 
     public List<SastanakUcesnik> getUcesnici(Integer sastanakId){
