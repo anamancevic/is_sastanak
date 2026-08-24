@@ -59,6 +59,11 @@ function Dashboard() {
           className="dugme">
           Izveštaji
         </button>
+        {/*Dugme za prikaz obavestenja*/}
+        <button onClick={() => navigate("/obavestenja")}
+          className="dugme">
+          Obavestenja
+        </button>
         {/* Dugme za odjavu */}
         <button onClick={() => { localStorage.removeItem("korisnik"); navigate("/"); }}
           className="dugme">

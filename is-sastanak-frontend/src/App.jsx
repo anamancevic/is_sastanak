@@ -9,6 +9,7 @@ import Ucesnici from "./stranice/Ucesnici";
 import Prisustvo from "./stranice/Prisustvo";
 import Predlozi from "./stranice/Predlozi";
 import Izvestaji from "./stranice/Izvestaji";
+import Obavestenja from "./stranice/Obavestenja";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/prisustvo" element= {<Prisustvo/>}/>
         <Route path="/predlozi" element= {<Predlozi/>}/>
          <Route path="/izvestaji" element={<Izvestaji />} />
+         <Route path="/obavestenja" element={<Obavestenja />} />
       </Routes>
     </BrowserRouter>
   );
