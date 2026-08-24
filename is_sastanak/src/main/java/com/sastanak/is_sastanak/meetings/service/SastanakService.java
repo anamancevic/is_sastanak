@@ -137,6 +137,17 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
         sastanak.setStatus(zahtev.getStatus());
         sastanak.setZakljucak(zahtev.getZakljucak());
 
+        List<SastanakUcesnik> ucesnici = sastanakUcesnikRepository.findBySastanakId(sastanakId);
+        for (SastanakUcesnik u : ucesnici) {
+            if (u.getKorisnik() != null) {
+                obavestenjaService.napraviObavestenje(
+                        u.getKorisnik().getId(),
+                        null,
+                        "Sastanak \"" + sastanak.getTema() + "\" je sada: " + sastanak.getStatus()
+                );
+            }
+        }
+
         return sastanakRepository.save(sastanak);
     }
     public List<Sastanak> getSastanciPoCelini(Integer celinaId){
