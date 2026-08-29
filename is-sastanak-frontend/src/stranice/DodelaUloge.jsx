@@ -35,8 +35,20 @@ function dodelaUloge() {
     ucitajPodatke();
   }, []);
 
+  function proveraUnosa() {
+    if(korisnikId === "") return "Morate izabrati korisnika kome će se dodeliti uloga!";
+    if(ulogaId === "") return "Morate izabrati ulogu koja će biti dodeljena korisniku!";
+    if(organizacionaCelinaId === "") return "Morate izabrati organizacionu celinu!";
+    return "";
+  }
+
 async function dodeliUlogu() {
     setPoruka("");
+    const greska = proveraUnosa();
+    if (greska !== "") {
+      setPoruka(greska);
+      return;
+    }
     try {
         const odgovor = await fetch("http://localhost:8080/api/korisnici/dodeli-ulogu", {
              method: "POST",
