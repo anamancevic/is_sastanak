@@ -33,9 +33,26 @@ function Korisnici() {
         ucitajCeline();
     }, []);
 
+    function proveriUnos() {
+        if (ime.trim() === "") return "Ime je obavezno.";
+        if (prezime.trim() === "") return "Prezime je obavezno.";
+        if (jmbg.trim().length !== 13) return "JMBG mora imati tacno 13 cifara.";
+        if (!/^\d+$/.test(jmbg)) return "JMBG sme da sadrzi samo cifre.";
+        if(mejl.trim() !== "" && !mejl.includes("@")) return "Mejl nije ispravan, mora sadrzati @";
+        if(korisnickoIme.trim() === "") return "Korisnicko ime je obavezno.";
+        if(lozinka.length < 4) return "Lozinka mora imati bar 4 karaktera.";
+        if(organizacionaCelinaId === "") return "Morate izabrati organizacionu celinu.";
+        return "";
+    }
+
 
     async function dodajKorisnika() {
         setPoruka("");
+        const greska = proveriUnos();
+        if (greska !== "") {
+            setPoruka(greska);
+            return;
+        }
         try {
             const odgovor = await fetch("http://localhost:8080/api/korisnici", {
                 method: "POST",
