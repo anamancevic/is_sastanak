@@ -9,9 +9,21 @@ function Login() {
   const[poruka, setPoruka] = useState("");
    const navigate = useNavigate();
 
+
+  function proveriUnos() {
+    if(korisnickoIme.trim() === "") return "Korisnicko ime mora biti uneto!";
+    if(lozinka.trim() === "") return "Lozinka mora biti uneta";
+    return "";
+  }
+
 async function prijaviSe() {
    {/* brisanje poruke ukoliko je već nešt bilo napisano pre */}
   setPoruka("");
+  const greska = proveriUnos();
+  if (greska !== "") {
+    setPoruka(greska);
+    return;
+  }
    try {
       const odgovor = await fetch("http://localhost:8080/api/login", {
         method: "POST",
