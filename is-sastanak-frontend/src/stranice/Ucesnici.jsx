@@ -37,8 +37,20 @@ function Ucesnici() {
             console.log("Greska pri ucitavanju ucesnika!");
         }
     }
+
+    function proveraUnosa() {
+        if(sastanakId === "") return "Morate izabrati sastanak!";
+        if(korisnikId === "") return "Morate izabrati korisnika koji je učesnik!";
+        return "";
+    }
+
     async function dodajUcesnika() {
         setPoruka("");
+        const greska = proveraUnosa();
+        if (greska !== "") {
+            setPoruka(greska);
+            return;
+        }
         try {
             const odgovor = await fetch("http://localhost:8080/api/sastanci/dodaj-ucesnika", {
                 method: "POST",

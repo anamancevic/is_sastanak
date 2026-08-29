@@ -5,6 +5,7 @@ function TackaSaPredlozima({tacka, sastanakId, ucesnici}) {
     const [predlozi, setPredlozi] = useState([]);
     const [tekst, setTekst] = useState("");
     const [korisnikId, setKorisnikId] = useState("");
+    const[poruka, setPoruka] = useState("");
 
     async function ucitajPredloge() {
         try {
@@ -19,7 +20,19 @@ function TackaSaPredlozima({tacka, sastanakId, ucesnici}) {
         ucitajPredloge();
     }, []);
 
+function proveraUnosa() {
+    if(korisnikId === "") return "Izaberite korisnika koji daje predlog!";
+    if(tekst.trim() === "") return "Morate uneti tekst predloga!";
+    return "";
+}
+
     async function dodajPredlog() {
+        setPoruka("");
+        const greska = proveraUnosa();
+        if (greska !== "") {
+            setPoruka(greska);
+            return;
+        }
         try {
             const odgovor = await fetch("http://localhost:8080/api/predlozi", {
                 method: "POST",
@@ -89,6 +102,9 @@ function TackaSaPredlozima({tacka, sastanakId, ucesnici}) {
                         Dodaj
                     </button>
                 </div>
+                {poruka && (
+                    <p className="tekst"> {poruka}</p>
+                )}
             </div>
     );
 }
