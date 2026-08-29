@@ -39,6 +39,12 @@ function ZakazivanjeSastanka() {
     }, []);
 
     function dodajTacku() {
+        const poslednja = tacke[tacke.length - 1];
+        if (poslednja.sadrzaj.trim() === "") {
+            setPoruka("Tačka mora imati sadrzaj!");
+            return;
+        }
+        setPoruka("");
         setTacke([...tacke, { redniBroj: tacke.length + 1, sadrzaj: "" }]);
     }
 
@@ -54,15 +60,28 @@ function ZakazivanjeSastanka() {
         setTacke(noveTacke);
     }
 
+    function proveriUnos() {
+        if (tema.trim() === "") return "Tema sastanka je obavezna.";
+        if (datumOdrzavanja.trim() === "") return "Datum održavanja je obavezan.";
+        if (kategorijaId === "") return "Morate izabrati kategoriju.";
+        if (organizacionaCelinaId === "") return "Morate izabrati organizacionu celinu.";
+        if (tacke.length === 0) return "Morate dodati bar jednu tačku dnevnog reda.";
+        return "";
+    }
+
     async function zakaziSastanak() {
         setPoruka("");
-
+        const greska = proveriUnos();
+        if (greska !== "") {
+            setPoruka(greska);
+            return;
+        }
         const korisnik = JSON.parse(localStorage.getItem("korisnik"));
 
         try {
             const odgovor = await fetch("http://localhost:8080/api/sastanci", {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     tema: tema,
                     datumOdrzavanja: datumOdrzavanja,
@@ -88,7 +107,7 @@ function ZakazivanjeSastanka() {
             setTip("VANREDNI");
             setKategorijaId("");
             setOrganizacionaCelinaId("");
-            setTacke([{redniBroj: 1, sadrzaj: ""}]);
+            setTacke([{ redniBroj: 1, sadrzaj: "" }]);
         } catch (greska) {
             setPoruka("Greska u povezivanju sa serverom!");
         }
@@ -175,8 +194,10 @@ function ZakazivanjeSastanka() {
                                     {/* dugme za brisanje tačke*/}
                                     <button onClick={() => obrisiTacku(index)}
                                         className="dugme"
-                                        style={{ width: "auto", padding: "8px 12px",
-                                         marginTop: 0, flexShrink: 0 }}>
+                                        style={{
+                                            width: "auto", padding: "8px 12px",
+                                            marginTop: 0, flexShrink: 0
+                                        }}>
                                         Obriši tačku
                                     </button>
                                 </div>
@@ -200,9 +221,9 @@ function ZakazivanjeSastanka() {
                     Nazad
                 </button>
 
-                            <p className="tekst">
-                                {poruka}
-                            </p>
+                <p className="tekst">
+                    {poruka}
+                </p>
 
             </div>
         </div>
