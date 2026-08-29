@@ -1,0 +1,37 @@
+services:
+  # MySQL baza
+  baza:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: is_sastanak
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./is_sastanak.sql:/docker-entrypoint-initdb.d/is-sastanak.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Backend (Spring Boot)
+  backend:
+    build: ./is_sastanak
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://baza:3306/is_sastanak
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      baza:
+        condition: service_healthy
+
+  # Frontend (React)
+  frontend:
+    build: ./is-sastanak-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
