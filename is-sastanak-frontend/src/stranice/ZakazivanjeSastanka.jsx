@@ -16,6 +16,9 @@ function ZakazivanjeSastanka() {
     const [rukovodilacId, setRukovodilacId] = useState("");
     const [organizacionaCelinaId, setOrganizacionaCelinaId] = useState("");
 
+    const[zapisnicarId, setZapisnicarId] = useState("");
+    const[zapisnicari, setZapisnicari] = useState([]);
+
     const [tacke, setTacke] = useState([{ redniBroj: 1, sadrzaj: "" }]);
 
     const [poruka, setPoruka] = useState("");
@@ -31,6 +34,9 @@ function ZakazivanjeSastanka() {
 
                 const c = await fetch("http://localhost:8080/api/celine");
                 setCeline(await c.json());
+
+                const z = await fetch("http://localhost:8080/api/korisnici/zapisnicari");
+                setZapisnicari(await z.json());
             } catch (greska) {
                 setPoruka("Greska pri ucitavanju podataka!");
             }
@@ -65,6 +71,7 @@ function ZakazivanjeSastanka() {
         if (datumOdrzavanja.trim() === "") return "Datum održavanja je obavezan.";
         if (kategorijaId === "") return "Morate izabrati kategoriju.";
         if (organizacionaCelinaId === "") return "Morate izabrati organizacionu celinu.";
+        if (zapisnicarId === "") return "Morate izabrati zapisničara sastanka.";
         if (tacke.length === 0) return "Morate dodati bar jednu tačku dnevnog reda.";
         return "";
     }
@@ -90,6 +97,7 @@ function ZakazivanjeSastanka() {
                     kategorijaId: kategorijaId,
                     rukovodilacId: korisnik.id,
                     organizacionaCelinaId: organizacionaCelinaId,
+                    zapisnicarId: zapisnicarId,
                     tacke: tacke
                 }),
             });
@@ -170,6 +178,18 @@ function ZakazivanjeSastanka() {
                             ))}
                         </select>
 
+                        {/*Padajuca lista za unos zapisnicara sastanka */}
+                            <select value={zapisnicarId} 
+                            onChange={(e)=> setZapisnicarId(e.target.value)}
+                            className="polje">
+                                <option value= "">--Izaberi zapisničara sastanka--</option>
+                                {zapisnicari.map((z)=> (
+                                    <option key={z.id} 
+                                    value = {z.id}>
+                                        {z.ime} {z.prezime}
+                                    </option>
+                                ))}
+                            </select>
                     </div>
 
                     <div style={{ flex: 1.3 }}>

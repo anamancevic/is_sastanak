@@ -28,4 +28,9 @@ public class KorisnikController {
     public List<Korisnik> getSviKorisnici() {
         return korisnikService.getSviKorisnici();
     }
+
+    @GetMapping("/zapisnicari")
+    public List<Korisnik> getZapisnicari(){
+        return korisnikService.getZapisnicari();
+    }
 }

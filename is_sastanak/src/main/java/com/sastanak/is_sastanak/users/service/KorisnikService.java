@@ -85,6 +85,10 @@ public class KorisnikService {
         return korisnikUlogaRepository.save(korisnikUloga);
     }
     public List<Korisnik> getSviKorisnici(){
+
         return korisnikRepository.findAll();
+    }
+    public List<Korisnik> getZapisnicari(){
+        return korisnikRepository.findByNazivUloge("zapisnicar");
     }
 }
