@@ -4,20 +4,25 @@ import { useNavigate } from "react-router-dom";
 function Obavestenja() {
     const navigate = useNavigate();
     const [obavestenja, setObavestenja] = useState([]);
+    const [strana, setStrana] = useState(0);
+    const [ukupnoStrana, setUkupnoStrana] = useState(0);
 
 
-    async function ucitajObavestenja() {
+    async function ucitajObavestenja(brojStrane) {
         const korisnik = JSON.parse(localStorage.getItem("korisnik"));
         try {
-            const odgovor = await fetch("http://localhost:8080/api/obavestenja/korisnik/" + korisnik.id);
-            setObavestenja(await odgovor.json());
+            const odgovor = await fetch("http://localhost:8080/api/obavestenja/korisnik/" + korisnik.id + "/stranica?strana=" + brojStrane + "&velicina=5");
+            const podaci = await odgovor.json();
+            setObavestenja(podaci.content);
+            setUkupnoStrana(podaci.totalPages);
+            setStrana(brojStrane);
         } catch (greska) {
             console.log("Greska pri ucitavanju obavestenja");
         }
     }
 
     useEffect(() => {
-        ucitajObavestenja();
+        ucitajObavestenja(0);
     }, []);
 
 
@@ -26,7 +31,7 @@ function Obavestenja() {
             await fetch("http://localhost:8080/api/obavestenja/" + id + "/procitano", {
                 method: "PUT",
             });
-            ucitajObavestenja();
+            ucitajObavestenja(strana);
         } catch (greska) {
             console.log("Greska pri oznacavanju obavestenja!");
         }
@@ -65,6 +70,29 @@ function Obavestenja() {
                             )}
                         </div>
                     ))
+                )}
+                {ukupnoStrana > 0 && (
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "12px", marginTop: "16px" }}>
+                        <button
+                            onClick={() => ucitajObavestenja(strana - 1)}
+                            disabled={strana === 0}
+                            className="dugme"
+                            style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}>
+                            Prethodna
+                        </button>
+
+                        <span style={{ color: "#54463d" }}>
+                            Strana {strana + 1} od {ukupnoStrana}
+                        </span>
+
+                        <button
+                            onClick={() => ucitajObavestenja(strana + 1)}
+                            disabled={strana >= ukupnoStrana - 1}
+                            className="dugme"
+                            style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}>
+                            Sledeća
+                        </button>
+                    </div>
                 )}
                 <button onClick={() => navigate("/dashboard")}
                     className="dugme">
