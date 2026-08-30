@@ -9,6 +9,9 @@ import com.sastanak.is_sastanak.users.model.Korisnik;
 import com.sastanak.is_sastanak.users.model.OrganizacionaCelina;
 import com.sastanak.is_sastanak.users.repository.KorisnikRepository;
 import com.sastanak.is_sastanak.users.repository.OrganizacionaCelinaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -165,5 +168,10 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
             lista.add(new SumiraniOdgovor(korisnikId, ime, prezime, broj));
         }
         return lista;
+    }
+
+    public Page<Sastanak> getSastanakStranica (int strana, int velicina){
+        Pageable pageable = PageRequest.of(strana, velicina);
+        return sastanakRepository.findAll(pageable);
     }
 }

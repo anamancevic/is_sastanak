@@ -5,6 +5,7 @@ import com.sastanak.is_sastanak.meetings.model.Sastanak;
 import com.sastanak.is_sastanak.meetings.model.SastanakUcesnik;
 import com.sastanak.is_sastanak.meetings.model.TackaDnevnogReda;
 import com.sastanak.is_sastanak.meetings.service.SastanakService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,5 +63,12 @@ public class SastanakController {
     @GetMapping("/sumirani-broj-ucesca")
         public List<SumiraniOdgovor> getSumiraniBrojUcesca(){
         return sastanakService.getSumiraniBrojUcesca();
+        }
+
+        @GetMapping("/stranica")
+    public Page<Sastanak> getSastanciStranica(
+            @RequestParam(defaultValue = "0") int strana,
+            @RequestParam(defaultValue = "10") int velicina){
+        return sastanakService.getSastanakStranica(strana, velicina);
         }
 }
