@@ -88,7 +88,9 @@ function ZakazivanjeSastanka() {
         try {
             const odgovor = await fetch("http://localhost:8080/api/sastanci", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json",
+                    "X-Korisnik": korisnik.korisnickoIme 
+                 },
                 body: JSON.stringify({
                     tema: tema,
                     datumOdrzavanja: datumOdrzavanja,

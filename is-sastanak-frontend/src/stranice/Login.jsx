@@ -24,10 +24,12 @@ async function prijaviSe() {
     setPoruka(greska);
     return;
   }
+  
    try {
       const odgovor = await fetch("http://localhost:8080/api/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json"
+         },
         body: JSON.stringify({ korisnickoIme, lozinka }),
       });
       if (!odgovor.ok) {

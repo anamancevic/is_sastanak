@@ -15,10 +15,13 @@ function SastanakKartica({ sastanak }) {
 
     async function sacuvajIzmenu() {
         setPoruka("");
+        const korisnik = JSON.parse(localStorage.getItem("korisnik"));
         try {
             const odgovor = await fetch("http://localhost:8080/api/sastanci/" + sastanak.id + "/status", {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json",
+                    "X-Korisnik": korisnik.korisnickoIme
+                 },
                 body: JSON.stringify({
                     status: status,
                     zakljucak: zakljucak
@@ -51,7 +54,7 @@ function SastanakKartica({ sastanak }) {
             {(jeAdmin || jeRukovodilac || jeZapisnicar) && 
              <button onClick={() => setPrikaziFormu(!prikaziFormu)}
                 className="dugme"
-                tyle={{ width: "auto", padding: "8px 16px", marginTop: "8px" }}>
+                style={{ width: "auto", padding: "8px 16px", marginTop: "8px" }}>
                 {prikaziFormu ? "Zatvori" : "Izmeni status"}
             </button>
             }
@@ -65,7 +68,7 @@ function SastanakKartica({ sastanak }) {
                         <option value="ZAKAZAN">Zakazan</option>
                         <option value="ODRZAN">Održan</option>
                         <option value="ODLOZEN">Odložen</option>
-                        <option value="NEODRŽAN">Neodržan</option>
+                        <option value="NEODRZAN">Neodržan</option>
                     </select>
 
                     <textarea placeholder="Zaključak sastanka"

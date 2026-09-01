@@ -49,10 +49,15 @@ async function dodeliUlogu() {
       setPoruka(greska);
       return;
     }
+
+    const korisnik = JSON.parse(localStorage.getItem("korisnik"));
+
     try {
         const odgovor = await fetch("http://localhost:8080/api/korisnici/dodeli-ulogu", {
              method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          "X-Korisnik": korisnik.korisnickoIme
+         },
         body: JSON.stringify({
           korisnikId: korisnikId,
           ulogaId: ulogaId,
