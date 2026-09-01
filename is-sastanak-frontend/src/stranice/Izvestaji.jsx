@@ -115,6 +115,16 @@ function Izvestaji() {
 
                         {izabraniSastanak && (
                             <div className="tacka-kartica">
+                                 <div style={{
+                                    backgroundColor: "#7a8b6f",
+                                    color: "white",
+                                    padding: "10px 14px",
+                                    borderRadius: "6px",
+                                    marginBottom: "12px",
+                                    fontWeight: "bold"
+                                }}>
+                                    RUKOVODILAC: {izabraniSastanak.rukovodilac.ime} {izabraniSastanak.rukovodilac.prezime}
+                                </div>
                                 <h3 className="podnaslov">
                                     {izabraniSastanak.tema}
                                 </h3>
@@ -132,9 +142,6 @@ function Izvestaji() {
                                 </p>
                                 <p style={{ color: "#54463d", margin: "6px 0" }}>
                                     <b>Organizaciona celina:</b> {izabraniSastanak.organizacionaCelina.naziv}
-                                </p>
-                                <p style={{ color: "#54463d", margin: "6px 0" }}>
-                                    <b>Rukovodilac:</b> {izabraniSastanak.rukovodilac.ime} {izabraniSastanak.rukovodilac.prezime}
                                 </p>
                                 {izabraniSastanak.zakljucak && (
                                     <p style={{ color: "#54463d", margin: "6px 0" }}>
@@ -184,6 +191,18 @@ function Izvestaji() {
                                         )}
                                     </div>
 
+                                )}
+                                 {izabraniSastanak.zapisnicar && (
+                                    <div style={{
+                                        backgroundColor: "#a08b7d",
+                                        color: "white",
+                                        padding: "10px 14px",
+                                        borderRadius: "6px",
+                                        marginTop: "12px",
+                                        fontWeight: "bold"
+                                    }}>
+                                        ZAPISNIČAR: {izabraniSastanak.zapisnicar.ime} {izabraniSastanak.zapisnicar.prezime}
+                                    </div>
                                 )}
                             </div>
                         )}

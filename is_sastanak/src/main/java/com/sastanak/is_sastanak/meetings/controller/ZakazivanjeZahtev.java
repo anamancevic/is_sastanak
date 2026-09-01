@@ -16,6 +16,7 @@ public class ZakazivanjeZahtev {
     private TipSastanka tip;
     private Integer kategorijaId;
     private Integer rukovodilacId;
+    private Integer zapisnicarId;
     private Integer organizacionaCelinaId;
     private List<TackaZahtev> tacke;
 }

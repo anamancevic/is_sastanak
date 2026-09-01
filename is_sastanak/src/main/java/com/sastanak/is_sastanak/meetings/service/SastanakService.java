@@ -46,15 +46,15 @@ public class SastanakService {
         this.obavestenjaService = obavestenjaService;
     }
 
-    public Sastanak zakaziSastanak(ZakazivanjeZahtev zahtev){
+    public Sastanak zakaziSastanak(ZakazivanjeZahtev zahtev) {
         KategorijaSastanka kategorija = kategorijaSastankaRepository.findById(zahtev.getKategorijaId())
-                .orElseThrow(()->new RuntimeException("Kategorija ne postoji!"));
+                .orElseThrow(() -> new RuntimeException("Kategorija ne postoji!"));
 
         Korisnik rukovodilac = korisnikRepository.findById(zahtev.getRukovodilacId())
-                .orElseThrow(()->new RuntimeException("Rukovodilac ne postoji!"));
+                .orElseThrow(() -> new RuntimeException("Rukovodilac ne postoji!"));
 
         OrganizacionaCelina celina = organizacionaCelinaRepository.findById(zahtev.getOrganizacionaCelinaId())
-                .orElseThrow(()-> new RuntimeException("Organizaciona celina ne postoji!"));
+                .orElseThrow(() -> new RuntimeException("Organizaciona celina ne postoji!"));
 
         Sastanak sastanak = new Sastanak();
         sastanak.setTema(zahtev.getTema());
@@ -66,6 +66,11 @@ public class SastanakService {
         sastanak.setRukovodilac(rukovodilac);
         sastanak.setOrganizacionaCelina(celina);
 
+        if (zahtev.getZapisnicarId() != null) {
+            Korisnik zapisnicar = korisnikRepository.findById(zahtev.getZapisnicarId())
+                    .orElseThrow(() -> new RuntimeException("Zapisnicar ne postoji!"));
+            sastanak.setZapisnicar(zapisnicar);
+        }
         Sastanak sacuvaniSastanak = sastanakRepository.save(sastanak);
 
         if (zahtev.getTacke() != null){
@@ -174,4 +179,5 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
         Pageable pageable = PageRequest.of(strana, velicina);
         return sastanakRepository.findAll(pageable);
     }
+
 }
