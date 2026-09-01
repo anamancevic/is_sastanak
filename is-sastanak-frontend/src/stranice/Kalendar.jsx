@@ -3,6 +3,59 @@ import { useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
+function SastanakUKalendaru({ sastanak }) {
+    const [osobe, setOsobe] = useState([]);
+
+    useEffect(() => {
+        async function ucitaj() {
+            try {
+                if (sastanak.status === "ODRZAN") {
+                    const odgovor = await fetch("http://localhost:8080/api/sastanci/" + sastanak.id + "/prisustvo");
+                    const prisustvo = await odgovor.json();
+
+                    const prisutni = prisustvo.filter((p) => p.status === "PRISUTAN");
+                    setOsobe(prisutni.map((p) => p.korisnik));
+                } else {
+                    const odgovor = await fetch("http://localhost:8080/api/sastanci/" + sastanak.id + "/ucesnici");
+                    const ucesnici = await odgovor.json();
+                    setOsobe(ucesnici.map((u) => u.korisnik));
+                }
+            } catch (greska) {
+                console.log("Greska pri ucitavanju osoba!");
+            }
+        }
+        ucitaj();
+    }, []);
+
+    return (
+        <div className="tacka-kartica">
+            <p className="tekst"
+                style={{ fontWeight: "bold" }}>{sastanak.tema}</p>
+            <p style={{ color: "#54463d" }}>
+                Status: {sastanak.status} | Tip: {sastanak.tip}
+            </p>
+            <p style={{ color: "#54463d", fontWeight: "bold", marginTop: "8px" }}>
+                {sastanak.status === "ODRZAN" ? "Prisutni:" : "Planirani učesnici:"}
+            </p>
+            {osobe.length === 0 ? (
+                <p style={{ color: "#8a8078", fontSize: "14px" }}>
+                    {sastanak.status === "ODRZAN" ? "Nema evidentiranih prisutnih!" : "Nema planiranih učesnika!"}
+                </p>
+            ) : (
+                <ul style={{ listStyle: "none", paddingLeft: "10px" }}>
+                    {osobe.map((o, index) => (
+                        o ? (
+                            <li key={index} style={{ color: "#54463d", fontSize: "14px" }}>
+                                {o.ime} {o.prezime}
+                            </li>
+                        ) : null
+                    ))}
+                </ul>
+            )}
+        </div>
+    )
+}
+
 function Kalendar() {
     const navigate = useNavigate();
     const [sastanci, setSastanci] = useState([]);
@@ -25,7 +78,7 @@ function Kalendar() {
         return datumSastanka.toDateString() === izabraniDatum.toDateString();
     });
 
-      return (
+    return (
         <div className="pozadina">
             <div className="kartica" style={{ width: "80%", maxWidth: "900px" }}>
                 <h2 className="naslov">Kalendar sastanaka</h2>
@@ -45,10 +98,7 @@ function Kalendar() {
                     <p className="tekst">Nema sastanaka za ovaj datum.</p>
                 ) : (
                     sastanciZaDatum.map((s) => (
-                        <div key={s.id} className="tacka-kartica">
-                            <p className="tekst" style={{ fontWeight: "bold" }}>{s.tema}</p>
-                            <p style={{ color: "#54463d" }}>Status: {s.status} | Tip: {s.tip}</p>
-                        </div>
+                       <SastanakUKalendaru key = {s.id} sastanak = {s}/>
                     ))
                 )}
 
