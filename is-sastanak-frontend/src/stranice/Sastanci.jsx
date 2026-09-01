@@ -7,6 +7,12 @@ function SastanakKartica({ sastanak }) {
     const [zakljucak, setZakljucak] = useState(sastanak.zakljucak || "");
     const [poruka, setPoruka] = useState("");
 
+    const korisnik = JSON.parse(localStorage.getItem("korisnik"));
+
+    const jeAdmin = korisnik.uloge.includes("administrator");
+    const jeRukovodilac = korisnik.uloge.includes("rukovodilac");
+    const jeZapisnicar = korisnik.uloge.includes("zapisnicar");
+
     async function sacuvajIzmenu() {
         setPoruka("");
         try {
@@ -41,11 +47,15 @@ function SastanakKartica({ sastanak }) {
             {sastanak.zakljucak && (
                 <p className="tekst"> Zakljucak: {sastanak.zakljucak}</p>
             )}
-            <button onClick={() => setPrikaziFormu(!prikaziFormu)}
+
+            {(jeAdmin || jeRukovodilac || jeZapisnicar) && 
+             <button onClick={() => setPrikaziFormu(!prikaziFormu)}
                 className="dugme"
                 tyle={{ width: "auto", padding: "8px 16px", marginTop: "8px" }}>
                 {prikaziFormu ? "Zatvori" : "Izmeni status"}
             </button>
+            }
+           
 
             {prikaziFormu && (
                 <div style={{ marginTop: "12px" }}>
