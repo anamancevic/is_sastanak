@@ -11,6 +11,7 @@ import Predlozi from "./stranice/Predlozi";
 import Izvestaji from "./stranice/Izvestaji";
 import Obavestenja from "./stranice/Obavestenja";
 import ZasticenaRuta from "./ZasticenaRuta";
+import Kalendar from "./stranice/Kalendar";
 
 function App() {
   return (
@@ -51,6 +52,11 @@ function App() {
             </ZasticenaRuta>}/>
          <Route path="/izvestaji" element={<Izvestaji />} />
          <Route path="/obavestenja" element={<Obavestenja />} />
+
+          <Route path="/kalendar" element= {
+          <ZasticenaRuta dozvoljeneUloge={["administrator", "rukovodilac"]}>
+            <Kalendar/>
+          </ZasticenaRuta>}/>
       </Routes>
     </BrowserRouter>
   );

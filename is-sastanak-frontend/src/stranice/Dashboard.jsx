@@ -44,6 +44,13 @@ function Dashboard() {
           className="dugme">
           Sastanci
         </button>
+        
+        {/*Dugme za kalendar sa sastancima */}
+        {(jeAdmin || jeRukovodilac) &&
+         <button onClick={() => navigate("/kalendar")}
+            className="dugme">
+                Kalendar
+          </button>}
 
         {/* Dugme za zakazivanje sastanaka */}
         {(jeAdmin || jeRukovodilac) &&
