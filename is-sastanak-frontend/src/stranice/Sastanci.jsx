@@ -19,9 +19,10 @@ function SastanakKartica({ sastanak }) {
         try {
             const odgovor = await fetch("http://localhost:8080/api/sastanci/" + sastanak.id + "/status", {
                 method: "PUT",
-                headers: { "Content-Type": "application/json",
+                headers: {
+                    "Content-Type": "application/json",
                     "X-Korisnik": korisnik.korisnickoIme
-                 },
+                },
                 body: JSON.stringify({
                     status: status,
                     zakljucak: zakljucak
@@ -44,6 +45,12 @@ function SastanakKartica({ sastanak }) {
             <h3 className="podnaslov">
                 {sastanak.tema}
             </h3>
+            {sastanak.rukovodilac && sastanak.rukovodilac.organizacionaCelina && (
+                <p style={{ color: "#7a8b6f", fontSize: "13px", fontStyle: "italic" }}>
+                    {sastanak.organizacionaCelina.id === sastanak.rukovodilac.organizacionaCelina.id
+                        ? "Matična celina" : "Druga celina"}
+                </p>
+            )}
             <p className="tekst"> Datum: {sastanak.datumOdrzavanja}</p>
             <p className="tekst">Status: {sastanak.status} | Tip: {sastanak.tip}</p>
             <p className="tekst"> Kategorija: {sastanak.kategorija.naziv}</p>
@@ -51,14 +58,14 @@ function SastanakKartica({ sastanak }) {
                 <p className="tekst"> Zakljucak: {sastanak.zakljucak}</p>
             )}
 
-            {(jeAdmin || jeRukovodilac || jeZapisnicar) && 
-             <button onClick={() => setPrikaziFormu(!prikaziFormu)}
-                className="dugme"
-                style={{ width: "auto", padding: "8px 16px", marginTop: "8px" }}>
-                {prikaziFormu ? "Zatvori" : "Izmeni status"}
-            </button>
+            {(jeAdmin || jeRukovodilac || jeZapisnicar) &&
+                <button onClick={() => setPrikaziFormu(!prikaziFormu)}
+                    className="dugme"
+                    style={{ width: "auto", padding: "8px 16px", marginTop: "8px" }}>
+                    {prikaziFormu ? "Zatvori" : "Izmeni status"}
+                </button>
             }
-           
+
 
             {prikaziFormu && (
                 <div style={{ marginTop: "12px" }}>
@@ -94,6 +101,8 @@ function Sastanci() {
 
     const [strana, setStrana] = useState(0);
     const [ukupnoStrana, setUkupnoStrana] = useState(0);
+
+    const [klasifikacija, setKlasifikacija] = useState("sve");//da li je sve, maticna ili druga
 
     useEffect(() => {
         async function ucitajCeline() {
@@ -137,12 +146,37 @@ function Sastanci() {
         }
     }
 
+    async function filtrirajKlasifikaciju(vrsta) {
+        if (vrsta === "sve") {
+            ucitajSastanke(0);//vraca klasicno na paginaciju
+            return;
+        }
+        //ucitava sve sastanke bez paginacije pa filtrira i onda tek paginacija
+        try {
+            const odgovor = await fetch("http://localhost:8080/api/sastanci");
+            const svi = await odgovor.json();
+
+            const filtrirani = svi.filter((s) => {
+                if (!s.rukovodilac || !s.rukovodilac.organizacionaCelina) {
+                    return false;
+                }
+                const istaCelina = s.organizacionaCelina.id === s.rukovodilac.organizacionaCelina.id;
+                return vrsta === "maticna" ? istaCelina : !istaCelina;
+            });
+            setSastanci(filtrirani);
+            setUkupnoStrana(0);//sakrivamo paginaciju kod klasifikacije
+        } catch (greska) {
+            console.log("Greska pri filtriranju klasifikacije!");
+        }
+    }
+
     return (
         <div className="pozadina">
             <div className="kartica" style={{ width: "80%", maxWidth: "1000px" }}>
                 <h2 className="naslov">
                     Sastanci
                 </h2>
+                {/*Filtriranje prema org celini */}
                 <select value={izabranaCelina}
                     onChange={(e) => filtrirajPoCelini(e.target.value)}
                     className="polje"
@@ -153,6 +187,36 @@ function Sastanci() {
                             value={c.id}>{c.naziv}</option>
                     ))}
                 </select>
+                {/*Filtriranje prema celini da li je maticna ili ne u odnosu na rukovodioca */}
+                <div style={{ display: "flex", gap: "8px", marginBottom: "16px", justifyContent: "center" }}>
+                    <button
+                        onClick={() => filtrirajKlasifikaciju("sve")}
+                        className="dugme"
+                        style={{
+                            width: "auto", padding: "8px 16px", marginTop: 0,
+                            backgroundColor: klasifikacija === "sve" ? "#54463d" : "#a08b7d"
+                        }}>
+                        Sve
+                    </button>
+                    <button
+                        onClick={() => filtrirajKlasifikaciju("maticna")}
+                        className="dugme"
+                        style={{
+                            width: "auto", padding: "8px 16px", marginTop: 0,
+                            backgroundColor: klasifikacija === "maticna" ? "#54463d" : "#a08b7d"
+                        }}>
+                        Matična celina
+                    </button>
+                    <button
+                        onClick={() => filtrirajKlasifikaciju("druga")}
+                        className="dugme"
+                        style={{
+                            width: "auto", padding: "8px 16px", marginTop: 0,
+                            backgroundColor: klasifikacija === "druga" ? "#54463d" : "#a08b7d"
+                        }}>
+                        Druga celina
+                    </button>
+                </div>
                 {sastanci.map((s) => (
                     <SastanakKartica key={s.id} sastanak={s} />
                 ))}
