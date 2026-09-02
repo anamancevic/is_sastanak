@@ -8,6 +8,7 @@ import com.sastanak.is_sastanak.notifications.service.ObavestenjaService;
 import com.sastanak.is_sastanak.users.model.Korisnik;
 import com.sastanak.is_sastanak.users.model.OrganizacionaCelina;
 import com.sastanak.is_sastanak.users.repository.KorisnikRepository;
+import com.sastanak.is_sastanak.users.repository.KorisnikUlogaRepository;
 import com.sastanak.is_sastanak.users.repository.OrganizacionaCelinaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ public class SastanakService {
     private final SastanakUcesnikRepository sastanakUcesnikRepository;
     private final PrisustvoRepository prisustvoRepository;
     private final ObavestenjaService obavestenjaService;
+    private final KorisnikUlogaRepository korisnikUlogaRepository;
 
     public SastanakService(SastanakRepository sastanakRepository,
                            KategorijaSastankaRepository kategorijaSastankaRepository,
@@ -35,7 +37,8 @@ public class SastanakService {
                            TackaDnevnogRedaRepository tackaDnevnogRedaRepository,
                            SastanakUcesnikRepository sastanakUcesnikRepository,
                            PrisustvoRepository prisustvoRepository,
-                           ObavestenjaService obavestenjaService) {
+                           ObavestenjaService obavestenjaService,
+                           KorisnikUlogaRepository korisnikUlogaRepository) {
         this.sastanakRepository = sastanakRepository;
         this.kategorijaSastankaRepository = kategorijaSastankaRepository;
         this.korisnikRepository = korisnikRepository;
@@ -44,6 +47,7 @@ public class SastanakService {
         this.sastanakUcesnikRepository = sastanakUcesnikRepository;
         this.prisustvoRepository = prisustvoRepository;
         this.obavestenjaService = obavestenjaService;
+        this.korisnikUlogaRepository = korisnikUlogaRepository;
     }
 
     public Sastanak zakaziSastanak(ZakazivanjeZahtev zahtev) {
@@ -184,5 +188,40 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
                 .orElseThrow(()-> new RuntimeException("Korisnik ne postoji!"));
         Integer celinaId = prijavljeni.getOrganizacionaCelina().getId();
         return sastanakUcesnikRepository.findSastanciByCelinaUcesnika(celinaId);
+    }
+    public List<SumiraniOdgovor> getSumiraniZaKorisnika(String korisnickoIme){
+        Korisnik prijavljeni = korisnikRepository.findByKorisnickoIme(korisnickoIme)
+                .orElseThrow(()-> new RuntimeException("Ne postoji korisnik!"));
+        //uloge prijavljenog
+        List<String> uloge = korisnikUlogaRepository.findByKorisnikId(prijavljeni.getId())
+                .stream()
+                .map(ku-> ku.getUloga().getNaziv())
+                .toList();
+        boolean jeRukovodilacIliAdmin = uloge.contains("rukovodilac") || uloge.contains("administrator");
+
+        //svi sumirani
+        List<Object[]> rezultati = prisustvoRepository.brojUcescaPoKorisniku();
+        List<SumiraniOdgovor> lista = new ArrayList<>();
+
+        for (Object[] red : rezultati){
+            Integer korisnikId = (Integer) red[0];
+            String ime = (String) red[1];
+            String prezime = (String) red[2];
+            Long broj = (Long) red[3];
+
+            if (jeRukovodilacIliAdmin){
+                Korisnik k = korisnikRepository.findById(korisnikId).orElse(null);
+                if (k!= null && k.getOrganizacionaCelina().getId().equals(prijavljeni.getOrganizacionaCelina().getId())){
+                    lista.add(new SumiraniOdgovor(korisnikId, ime, prezime, broj));
+                }
+                }
+            else {
+                //obican ucesnik, vidi samo svoje
+                if (korisnikId.equals(prijavljeni.getId())){
+                    lista.add(new SumiraniOdgovor(korisnikId, ime, prezime, broj));
+                }
+            }
+        }
+    return lista;
     }
 }

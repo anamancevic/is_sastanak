@@ -75,4 +75,8 @@ public class SastanakController {
         public List<Sastanak> getSastanciMojihZaposlenih(@RequestHeader("X-Korisnik") String korisnickoIme){
         return sastanakService.getSastanciMojihZaposlenih(korisnickoIme);
         }
+        @GetMapping("/sumirani-broj-ucesca-moj")
+        public List<SumiraniOdgovor> getSumiraniZaKorisnika(@RequestHeader("X-Korisnik") String korisnickoIme){
+        return sastanakService.getSumiraniZaKorisnika(korisnickoIme);
+        }
 }
