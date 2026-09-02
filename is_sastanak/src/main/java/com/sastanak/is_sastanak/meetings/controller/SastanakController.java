@@ -76,8 +76,9 @@ public class SastanakController {
         return sastanakService.getSastanciMojihZaposlenih(korisnickoIme);
         }
         @GetMapping("/sumirani-broj-ucesca-moj")
-        public List<SumiraniOdgovor> getSumiraniZaKorisnika(@RequestHeader("X-Korisnik") String korisnickoIme){
-        return sastanakService.getSumiraniZaKorisnika(korisnickoIme);
+        public List<SumiraniOdgovor> getSumiraniZaKorisnika(@RequestHeader("X-Korisnik") String korisnickoIme,
+                                                            @RequestParam(defaultValue = "sve") String period){
+        return sastanakService.getSumiraniZaKorisnika(korisnickoIme, period);
         }
         @GetMapping("/moji")
     public List<Sastanak> getSastanakZaKorisnika(@RequestHeader("X-Korisnik") String korisnickoIme){

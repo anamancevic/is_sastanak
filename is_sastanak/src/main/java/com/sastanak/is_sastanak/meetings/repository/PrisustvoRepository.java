@@ -14,4 +14,11 @@ public interface PrisustvoRepository extends JpaRepository<Prisustvo, Integer> {
     "FROM Prisustvo p WHERE p.status = 'PRISUTAN' " +
     "GROUP BY p.korisnik.id, p.korisnik.ime, p.korisnik.prezime")
     List<Object[]> brojUcescaPoKorisniku();
+
+    //broji samo prisustva čiji sastanak je od datog datuma
+    @Query("SELECT p.korisnik.id, p.korisnik.ime, p.korisnik.prezime, COUNT(p) " +
+            "FROM Prisustvo p WHERE p.status = 'PRISUTAN' " +
+            "AND p.sastanak.datumOdrzavanja >= :odDatuma " +
+            "GROUP BY p.korisnik.id, p.korisnik.ime, p.korisnik.prezime")
+    List<Object[]> brojUcescaOdDatuma(java.time.LocalDateTime odDatuma);
 }

@@ -46,15 +46,17 @@ function Izvestaji() {
     const [izabraniSastanak, setIzabraniSastanak] = useState(null);
     const [prikaziPotpuni, setPrikaziPotpuni] = useState(false);
     const [prisustvo, setPrisustvo] = useState([]);
-    const[sumirani, setSumirani] = useState([]);
-    const[prikazSumirani, setPrikazSumirani] = useState(false);
+    const [sumirani, setSumirani] = useState([]);
+    const [prikazSumirani, setPrikazSumirani] = useState(false);
+
+    const [period, setPeriod] = useState("godina");
 
     useEffect(() => {
         async function ucitaj() {
             const korisnik = JSON.parse(localStorage.getItem("korisnik"));
             try {
                 const s = await fetch("http://localhost:8080/api/sastanci/moji", {
-                    headers: {"X-Korisnik": korisnik.korisnickoIme}
+                    headers: { "X-Korisnik": korisnik.korisnickoIme }
                 });
                 setSastanci(await s.json());
             } catch (greska) {
@@ -88,13 +90,14 @@ function Izvestaji() {
         }
     }
 
-    async function ucitajSumirani() {
+    async function ucitajSumirani(izabraniPeriod) {
         const korisnik = JSON.parse(localStorage.getItem("korisnik"));
         try {
-            const odgovor = await fetch("http://localhost:8080/api/sastanci/sumirani-broj-ucesca-moj",{
-                headers: {"X-Korisnik": korisnik.korisnickoIme}
+            const odgovor = await fetch("http://localhost:8080/api/sastanci/sumirani-broj-ucesca-moj?period=" + izabraniPeriod, {
+                headers: { "X-Korisnik": korisnik.korisnickoIme }
             });
             setSumirani(await odgovor.json());
+            setPeriod(izabraniPeriod);
             setPrikazSumirani(true);
         } catch (greska) {
             console.log("Greska pri ucitavanju sumiranih!");
@@ -108,7 +111,7 @@ function Izvestaji() {
                 <h2 className="naslov">Izvestaji</h2>
                 <div style={{ display: "flex", gap: "24px", alignItems: "flex-start" }}>
                     {/*Deo sa izvestajima o sastancima*/}
-                    <div style={{flex: 1}}>
+                    <div style={{ flex: 1 }}>
                         <h3 className="podnaslov">Izvestaj o sastanku</h3>
                         <select
                             onChange={(e) => izaberiSastanak(e.target.value)}
@@ -121,7 +124,7 @@ function Izvestaji() {
 
                         {izabraniSastanak && (
                             <div className="tacka-kartica">
-                                 <div style={{
+                                <div style={{
                                     backgroundColor: "#7a8b6f",
                                     color: "white",
                                     padding: "10px 14px",
@@ -198,7 +201,7 @@ function Izvestaji() {
                                     </div>
 
                                 )}
-                                 {izabraniSastanak.zapisnicar && (
+                                {izabraniSastanak.zapisnicar && (
                                     <div style={{
                                         backgroundColor: "#a08b7d",
                                         color: "white",
@@ -214,30 +217,53 @@ function Izvestaji() {
                         )}
                     </div>
                     {/*Deo sa sumiranim brojem ucesca*/}
-                    <div style={{flex: 1}}>
+                    <div style={{ flex: 1 }}>
                         <h3 className="podnaslov">Sumirani broj učešća</h3>
-                       <button onClick={()=> {
-                        if (prikazSumirani) {
-                            setPrikazSumirani(false);
-                        } else{
-                            ucitajSumirani();
-                        }
-                       }}
-                       className="dugme"
-                       style={{ marginTop: 0 }}>
-                        {prikazSumirani ? "Sakrij sumirani broj" : "Prikaži sumirani broj"}
-                       </button>
-                       {prikazSumirani && (
-                       <div className="tacka-kartica">
+                        <button onClick={() => {
+                            if (prikazSumirani) {
+                                setPrikazSumirani(false);
+                            } else {
+                                ucitajSumirani("godina");
+                            }
+                        }}
+                            className="dugme"
+                            style={{ marginTop: 0 }}>
+                            {prikazSumirani ? "Sakrij sumirani broj" : "Prikaži sumirani broj"}
+                        </button>
+                        {prikazSumirani && (
+                            <div className="tacka-kartica">
+                                <div style={{ display: "flex", gap: "6px", marginBottom: "12px", justifyContent: "center" }}>
+                                    <button onClick={() => ucitajSumirani("nedelja")} className="dugme"
+                                        style={{
+                                            width: "auto", padding: "6px 12px", marginTop: 0,
+                                            backgroundColor: period === "nedelja" ? "#54463d" : "#a08b7d"
+                                        }}>
+                                        Nedelja
+                                    </button>
+                                    <button onClick={() => ucitajSumirani("mesec")} className="dugme"
+                                        style={{
+                                            width: "auto", padding: "6px 12px", marginTop: 0,
+                                            backgroundColor: period === "mesec" ? "#54463d" : "#a08b7d"
+                                        }}>
+                                        Mesec
+                                    </button>
+                                    <button onClick={() => ucitajSumirani("godina")} className="dugme"
+                                        style={{
+                                            width: "auto", padding: "6px 12px", marginTop: 0,
+                                            backgroundColor: period === "godina" ? "#54463d" : "#a08b7d"
+                                        }}>
+                                        Godina
+                                    </button>
+                                </div>
                                 {sumirani.length === 0 ? (
                                     <p className="tekst">
                                         Nema evidentiranih učešća
                                     </p>
                                 ) : (
                                     <ul style={{ listStyle: "none", paddingLeft: 0 }}>
-                                        {sumirani.map((s)=> (
+                                        {sumirani.map((s) => (
                                             <li key={s.korisnikId}
-                                            style={{ color: "#54463d", marginBottom: "6px" }}>
+                                                style={{ color: "#54463d", marginBottom: "6px" }}>
                                                 {s.ime} {s.prezime}: <b>{s.brojUcesca}</b>
                                                 {s.brojUcesca === 1 ? " sastanak" : " sastanaka"}
                                             </li>
@@ -245,9 +271,9 @@ function Izvestaji() {
                                     </ul>
                                 )}
                             </div>
-                       )}
-                            
-                        
+                        )}
+
+
                     </div>
                 </div>
 

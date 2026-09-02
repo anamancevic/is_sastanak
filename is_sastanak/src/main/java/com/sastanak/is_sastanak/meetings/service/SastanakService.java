@@ -191,7 +191,7 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
     }
 
     //vraca listu sumiranih izvestaja u zavisnisti od uloge
-    public List<SumiraniOdgovor> getSumiraniZaKorisnika(String korisnickoIme){
+    public List<SumiraniOdgovor> getSumiraniZaKorisnika(String korisnickoIme, String period){
         Korisnik prijavljeni = korisnikRepository.findByKorisnickoIme(korisnickoIme)
                 .orElseThrow(()-> new RuntimeException("Ne postoji korisnik!"));
         //uloge prijavljenog
@@ -199,10 +199,23 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
                 .stream()
                 .map(ku-> ku.getUloga().getNaziv())
                 .toList();
-        boolean jeRukovodilacIliAdmin = uloge.contains("rukovodilac") || uloge.contains("administrator");
+        boolean jeRukovodilac = uloge.contains("rukovodilac");
+        boolean jeAdministrator = uloge.contains("administrator");
+
+        //racunanje granice perioda
+        java.time.LocalDateTime odDatuma;
+        java.time.LocalDate danas = java.time.LocalDate.now();
+
+        if (period.equals("nedelja")){
+            odDatuma = danas.with(java.time.DayOfWeek.MONDAY).atStartOfDay(); // pocetak ove nedelje
+        } else if (period.equals("mesec")) {
+            odDatuma = danas.withDayOfMonth(1).atStartOfDay(); //pocetak ovog meseca
+        }else{
+            odDatuma = danas.withDayOfYear(1).atStartOfDay();//od prvog januara te godine
+        }
 
         //svi sumirani
-        List<Object[]> rezultati = prisustvoRepository.brojUcescaPoKorisniku();
+        List<Object[]> rezultati = prisustvoRepository.brojUcescaOdDatuma(odDatuma);
         List<SumiraniOdgovor> lista = new ArrayList<>();
 
         for (Object[] red : rezultati){
@@ -211,7 +224,12 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
             String prezime = (String) red[2];
             Long broj = (Long) red[3];
 
-            if (jeRukovodilacIliAdmin){
+            if (jeAdministrator){
+                //admin vidi sve
+                lista.add(new SumiraniOdgovor(korisnikId, ime, prezime, broj));
+            }
+            else if (jeRukovodilac){
+                //rukovodilac vidi samo svoju celinu
                 Korisnik k = korisnikRepository.findById(korisnikId).orElse(null);
                 if (k!= null && k.getOrganizacionaCelina().getId().equals(prijavljeni.getOrganizacionaCelina().getId())){
                     lista.add(new SumiraniOdgovor(korisnikId, ime, prezime, broj));
