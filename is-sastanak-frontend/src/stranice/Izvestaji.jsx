@@ -51,8 +51,11 @@ function Izvestaji() {
 
     useEffect(() => {
         async function ucitaj() {
+            const korisnik = JSON.parse(localStorage.getItem("korisnik"));
             try {
-                const s = await fetch("http://localhost:8080/api/sastanci");
+                const s = await fetch("http://localhost:8080/api/sastanci/moji", {
+                    headers: {"X-Korisnik": korisnik.korisnickoIme}
+                });
                 setSastanci(await s.json());
             } catch (greska) {
                 console.log("Greska pri ucitavanju sastanaka");
