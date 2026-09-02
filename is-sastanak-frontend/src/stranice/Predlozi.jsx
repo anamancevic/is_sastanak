@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Meni from "./Meni";
 
 function TackaSaPredlozima({tacka, sastanakId, ucesnici}) {
     const [predlozi, setPredlozi] = useState([]);
@@ -153,6 +154,7 @@ async function ucitajUcesnike(id) {
     }
     return (
         <div className="pozadina">
+            <Meni/>
             <div className="kartica" style={{ width: "600px" }}>
                 <h2 className="naslov">Predlozi po tačkama</h2>
 

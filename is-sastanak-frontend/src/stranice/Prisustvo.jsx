@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Meni from "./Meni";
 
 function Prisustvo() {
     const navigate = useNavigate();
@@ -58,6 +59,7 @@ function Prisustvo() {
     }
     return (
         <div className="pozadina">
+            <Meni/>
             <div className="kartica" style={{ width: "500px" }}>
                 <h2 className="naslov"> Evidentiranje prisustva </h2>
 

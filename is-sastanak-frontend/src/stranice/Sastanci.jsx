@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Meni from "./Meni";
 
 function SastanakKartica({ sastanak }) {
     const [prikaziFormu, setPrikaziFormu] = useState(false);
@@ -46,47 +47,65 @@ function SastanakKartica({ sastanak }) {
                 {sastanak.tema}
             </h3>
             {sastanak.rukovodilac && sastanak.rukovodilac.organizacionaCelina && (
-                <p style={{ color: "#7a8b6f", fontSize: "13px", fontStyle: "italic" }}>
+                <p style={{ color: "#8e7cab", fontSize: "13px", fontStyle: "italic" }}>
                     {sastanak.organizacionaCelina.id === sastanak.rukovodilac.organizacionaCelina.id
-                        ? "Matična celina" : "Druga celina"}
+                        ? "Matična celina"
+                        : "Druga celina"}
                 </p>
             )}
-            <p className="tekst"> Datum: {sastanak.datumOdrzavanja}</p>
-            <p className="tekst">Status: {sastanak.status} | Tip: {sastanak.tip}</p>
-            <p className="tekst"> Kategorija: {sastanak.kategorija.naziv}</p>
+            <p className="tekst">
+                Datum: {sastanak.datumOdrzavanja}
+            </p>
+            <p className="tekst">
+                Status: {sastanak.status} | Tip: {sastanak.tip}
+            </p>
+            <p className="tekst">
+                Kategorija: {sastanak.kategorija.naziv}
+            </p>
             {sastanak.zakljucak && (
-                <p className="tekst"> Zakljucak: {sastanak.zakljucak}</p>
+                <p className="tekst">
+                    Zaključak: {sastanak.zakljucak}
+                </p>
             )}
-
-            {(jeAdmin || jeRukovodilac || jeZapisnicar) &&
-                <button onClick={() => setPrikaziFormu(!prikaziFormu)}
+            {(jeAdmin || jeRukovodilac || jeZapisnicar) && (
+                <button
+                    onClick={() => setPrikaziFormu(!prikaziFormu)}
                     className="dugme"
-                    style={{ width: "auto", padding: "8px 16px", marginTop: "8px" }}>
+                    style={{ width: "auto", padding: "8px 16px", marginTop: "8px" }}
+                >
                     {prikaziFormu ? "Zatvori" : "Izmeni status"}
                 </button>
-            }
-
-
+            )}
             {prikaziFormu && (
                 <div style={{ marginTop: "12px" }}>
-                    <select value={status}
+                    <select
+                        value={status}
                         onChange={(e) => setStatus(e.target.value)}
-                        className="polje">
+                        className="polje"
+                    >
                         <option value="ZAKAZAN">Zakazan</option>
                         <option value="ODRZAN">Održan</option>
                         <option value="ODLOZEN">Odložen</option>
                         <option value="NEODRZAN">Neodržan</option>
                     </select>
-
-                    <textarea placeholder="Zaključak sastanka"
+                    <textarea
+                        placeholder="Zaključak sastanka"
                         value={zakljucak}
                         onChange={(e) => setZakljucak(e.target.value)}
                         className="polje"
                         style={{ minHeight: "80px", resize: "vertical" }}
                     />
-                    <button onClick={sacuvajIzmenu}
-                        className="dugme">Sačuvaj</button>
-                    {poruka && <p className="tekst">{poruka}</p>}
+                    <button
+                        onClick={sacuvajIzmenu}
+                        className="dugme"
+                    >
+                        Sačuvaj
+                    </button>
+                    {poruka && (
+                        <p className="tekst">
+                            {poruka}
+                        </p>
+                    )}
                 </div>
             )}
         </div>
@@ -172,82 +191,101 @@ function Sastanci() {
 
     return (
         <div className="pozadina">
-            <div className="kartica" style={{ width: "80%", maxWidth: "1000px" }}>
+            <Meni />
+            <div className="korisnici-sadrzaj">
                 <h2 className="naslov">
                     Sastanci
                 </h2>
-                {/*Filtriranje prema org celini */}
-                <select value={izabranaCelina}
+                {/* Filtriranje prema org celini */}
+                <select
+                    value={izabranaCelina}
                     onChange={(e) => filtrirajPoCelini(e.target.value)}
                     className="polje"
-                    style={{ maxWidth: "300px", marginBottom: "20px" }}>
+                    style={{ maxWidth: "300px" }}
+                >
                     <option value="">--Izaberi celinu--</option>
                     {celine.map((c) => (
-                        <option key={c.id}
-                            value={c.id}>{c.naziv}</option>
+                        <option key={c.id} value={c.id}>
+                            {c.naziv}
+                        </option>
                     ))}
                 </select>
-                {/*Filtriranje prema celini da li je maticna ili ne u odnosu na rukovodioca */}
-                <div style={{ display: "flex", gap: "8px", marginBottom: "16px", justifyContent: "center" }}>
+                {/* Filtriranje prema celini da li je maticna ili ne */}
+                <div className="sastanci-filteri">
                     <button
                         onClick={() => filtrirajKlasifikaciju("sve")}
                         className="dugme"
                         style={{
-                            width: "auto", padding: "8px 16px", marginTop: 0,
-                            backgroundColor: klasifikacija === "sve" ? "#54463d" : "#a08b7d"
-                        }}>
+                            width: "auto",
+                            padding: "8px 16px",
+                            marginTop: 0,
+                            backgroundColor: klasifikacija === "sve" ? "#5b3f88" : "#8e7cab"
+                        }}
+                    >
                         Sve
                     </button>
                     <button
                         onClick={() => filtrirajKlasifikaciju("maticna")}
                         className="dugme"
                         style={{
-                            width: "auto", padding: "8px 16px", marginTop: 0,
-                            backgroundColor: klasifikacija === "maticna" ? "#54463d" : "#a08b7d"
-                        }}>
+                            width: "auto",
+                            padding: "8px 16px",
+                            marginTop: 0,
+                            backgroundColor: klasifikacija === "maticna" ? "#5b3f88" : "#8e7cab"
+                        }}
+                    >
                         Matična celina
                     </button>
                     <button
                         onClick={() => filtrirajKlasifikaciju("druga")}
                         className="dugme"
                         style={{
-                            width: "auto", padding: "8px 16px", marginTop: 0,
-                            backgroundColor: klasifikacija === "druga" ? "#54463d" : "#a08b7d"
-                        }}>
+                            width: "auto",
+                            padding: "8px 16px",
+                            marginTop: 0,
+                            backgroundColor: klasifikacija === "druga" ? "#5b3f88" : "#8e7cab"
+                        }}
+                    >
                         Druga celina
                     </button>
                 </div>
-                {sastanci.map((s) => (
-                    <SastanakKartica key={s.id} sastanak={s} />
-                ))}
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "12px", marginTop: "16px" }}>
+                <div className="sastanci-lista">
+                    {sastanci.map((s) => (
+                        <SastanakKartica key={s.id} sastanak={s} />
+                    ))}
+                </div>
+                <div className="sastanci-paginacija">
                     <button
                         onClick={() => ucitajSastanke(strana - 1)}
                         disabled={strana === 0}
                         className="dugme"
-                        style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}>
+                        style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}
+                    >
                         Prethodna
                     </button>
-
-                    <span style={{ color: "#54463d" }}>
+                    <span>
                         Strana {strana + 1} od {ukupnoStrana}
                     </span>
-
                     <button
                         onClick={() => ucitajSastanke(strana + 1)}
                         disabled={strana >= ukupnoStrana - 1}
                         className="dugme"
-                        style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}>
+                        style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}
+                    >
                         Sledeća
                     </button>
                 </div>
-                <button onClick={() => navigate("/dashboard")}
-                    className="dugme">
-                    Nazad
-                </button>
+                <div className="korisnici-dugmad">
+                    <button
+                        onClick={() => navigate("/dashboard")}
+                        className="dugme"
+                    >
+                        Nazad
+                    </button>
+                </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default Sastanci;

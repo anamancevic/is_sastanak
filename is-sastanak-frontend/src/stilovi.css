@@ -339,3 +339,47 @@
     height: auto;
     object-fit: contain;
 }
+.korisnici-sadrzaj {
+    width: 85%;
+    max-width: 1100px;
+    padding: 40px 0;
+}
+
+.korisnici-forma {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 30px;
+}
+
+.korisnici-dugmad {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.korisnici-dugmad .dugme {
+    width: auto;
+    margin-top: 0;
+}
+.sastanci-filteri {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.sastanci-lista {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.sastanci-paginacija {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 25px;
+    color: #5f576c;
+}

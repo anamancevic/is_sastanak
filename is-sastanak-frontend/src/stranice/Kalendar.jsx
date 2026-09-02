@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import Meni from "./Meni";
 
 function SastanakUKalendaru({ sastanak }) {
     const [osobe, setOsobe] = useState([]);
@@ -80,6 +81,7 @@ function Kalendar() {
 
     return (
         <div className="pozadina">
+            <Meni/>
             <div className="kartica" style={{ width: "80%", maxWidth: "900px" }}>
                 <h2 className="naslov">Kalendar sastanaka</h2>
 

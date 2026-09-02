@@ -55,6 +55,12 @@ function Meni() {
                 </button>
 
 
+
+                {/*Vracanje na pocetnu stranu */}
+                <div className="meni-stavka"
+                onClick={()=> idiNa("/dashboard")}>
+                    Početna strana
+                </div>
                 {/* Upravljanje korisnicima */}
                 {jeAdmin &&
                     <div

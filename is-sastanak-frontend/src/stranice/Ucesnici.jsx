@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Meni from "./Meni";
 
 
 function Ucesnici() {
@@ -77,6 +78,7 @@ function Ucesnici() {
     }
     return (
         <div className="pozadina">
+            <Meni/>
             <div className="kartica">
                 <h2 className="naslov">
                     Ucesnici sastanka

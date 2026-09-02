@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Meni from "./Meni";
 
 function Obavestenja() {
     const navigate = useNavigate();
@@ -39,6 +40,7 @@ function Obavestenja() {
 
     return (
         <div className="pozadina">
+            <Meni/>
             <div className="kartica" style={{ width: "80%", maxWidth: "600px" }}>
                 <h2 className="naslov">Obavestenja</h2>
 
