@@ -86,8 +86,11 @@ function Izvestaji() {
     }
 
     async function ucitajSumirani() {
+        const korisnik = JSON.parse(localStorage.getItem("korisnik"));
         try {
-            const odgovor = await fetch("http://localhost:8080/api/sastanci/sumirani-broj-ucesca");
+            const odgovor = await fetch("http://localhost:8080/api/sastanci/sumirani-broj-ucesca-moj",{
+                headers: {"X-Korisnik": korisnik.korisnickoIme}
+            });
             setSumirani(await odgovor.json());
             setPrikazSumirani(true);
         } catch (greska) {

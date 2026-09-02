@@ -189,6 +189,8 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
         Integer celinaId = prijavljeni.getOrganizacionaCelina().getId();
         return sastanakUcesnikRepository.findSastanciByCelinaUcesnika(celinaId);
     }
+
+    //vraca listu sumiranih izvestaja u zavisnisti od uloge
     public List<SumiraniOdgovor> getSumiraniZaKorisnika(String korisnickoIme){
         Korisnik prijavljeni = korisnikRepository.findByKorisnickoIme(korisnickoIme)
                 .orElseThrow(()-> new RuntimeException("Ne postoji korisnik!"));
@@ -223,5 +225,24 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
             }
         }
     return lista;
+    }
+    //vraca sastanke korisnika u zavisnosti od uloge
+    public List<Sastanak> getSastanciZaKorisnika(String korisnickoIme){
+        Korisnik prijavljeni = korisnikRepository.findByKorisnickoIme(korisnickoIme)
+                .orElseThrow(()-> new RuntimeException("Ne postoji korisnik!"));
+    List<String> uloge = korisnikUlogaRepository.findByKorisnikId(prijavljeni.getId())
+            .stream()
+            .map(ku -> ku.getUloga().getNaziv())
+            .toList();
+
+    if (uloge.contains("administrator")){
+        return sastanakRepository.findAll();
+    } else if (uloge.contains("rukovodilac")) {
+        Integer celinaId = prijavljeni.getOrganizacionaCelina().getId();
+        return sastanakRepository.findByOrganizacionaCelinaId(celinaId);
+    }
+    else {
+        return sastanakRepository.findSastanciKorisnika(prijavljeni.getId());
+    }
     }
 }

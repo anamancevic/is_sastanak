@@ -79,4 +79,8 @@ public class SastanakController {
         public List<SumiraniOdgovor> getSumiraniZaKorisnika(@RequestHeader("X-Korisnik") String korisnickoIme){
         return sastanakService.getSumiraniZaKorisnika(korisnickoIme);
         }
+        @GetMapping("/moji")
+    public List<Sastanak> getSastanakZaKorisnika(@RequestHeader("X-Korisnik") String korisnickoIme){
+        return sastanakService.getSastanciZaKorisnika(korisnickoIme);
+        }
 }
