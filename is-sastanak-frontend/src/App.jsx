@@ -12,6 +12,7 @@ import Izvestaji from "./stranice/Izvestaji";
 import Obavestenja from "./stranice/Obavestenja";
 import ZasticenaRuta from "./ZasticenaRuta";
 import Kalendar from "./stranice/Kalendar";
+import MojiZaposleni from "./stranice/MojiZaposleni";
 
 function App() {
   return (
@@ -22,41 +23,46 @@ function App() {
 
         <Route path="/korisnici" element={
           <ZasticenaRuta dozvoljeneUloge={["administrator"]}>
-              <Korisnici/>
-            </ZasticenaRuta>}/>
+            <Korisnici />
+          </ZasticenaRuta>} />
 
-        <Route path="/dodela-uloge" element ={
+        <Route path="/dodela-uloge" element={
           <ZasticenaRuta dozvoljeneUloge={["administrator"]}>
-             <DodelaUloge/>
-          </ZasticenaRuta>}/>
+            <DodelaUloge />
+          </ZasticenaRuta>} />
 
-        <Route path="/sastanci" element= {<Sastanci/>}/>
-        <Route path="/zakazivanje-sastanka" element= {
+        <Route path="/sastanci" element={<Sastanci />} />
+        <Route path="/zakazivanje-sastanka" element={
           <ZasticenaRuta dozvoljeneUloge={["administrator", "rukovodilac"]}>
-            <ZakazivanjeSastanka/>
-              </ZasticenaRuta>}/>
+            <ZakazivanjeSastanka />
+          </ZasticenaRuta>} />
 
-        <Route path="/ucesnici" element= {
+        <Route path="/ucesnici" element={
           <ZasticenaRuta dozvoljeneUloge={["administrator", "rukovodilac"]}>
-            <Ucesnici/>
-          </ZasticenaRuta>}/>
+            <Ucesnici />
+          </ZasticenaRuta>} />
 
-        <Route path="/prisustvo" element= {
+        <Route path="/prisustvo" element={
           <ZasticenaRuta dozvoljeneUloge={["rukovodilac", "administrator", "zapisnicar"]}>
-           <Prisustvo/>
-            </ZasticenaRuta>}/>
+            <Prisustvo />
+          </ZasticenaRuta>} />
 
-        <Route path="/predlozi" element= {
+        <Route path="/predlozi" element={
           <ZasticenaRuta dozvoljeneUloge={["zapisnicar", "administrator"]}>
-            <Predlozi/>
-            </ZasticenaRuta>}/>
-         <Route path="/izvestaji" element={<Izvestaji />} />
-         <Route path="/obavestenja" element={<Obavestenja />} />
+            <Predlozi />
+          </ZasticenaRuta>} />
+        <Route path="/izvestaji" element={<Izvestaji />} />
+        <Route path="/obavestenja" element={<Obavestenja />} />
 
-          <Route path="/kalendar" element= {
+        <Route path="/kalendar" element={
           <ZasticenaRuta dozvoljeneUloge={["administrator", "rukovodilac"]}>
-            <Kalendar/>
-          </ZasticenaRuta>}/>
+            <Kalendar />
+          </ZasticenaRuta>} />
+        <Route path="/moji-zaposleni" element={
+          <ZasticenaRuta dozvoljeneUloge={["rukovodilac", "administrator"]}>
+            <MojiZaposleni />
+          </ZasticenaRuta>
+        } />
       </Routes>
     </BrowserRouter>
   );

@@ -13,4 +13,6 @@ public interface KorisnikRepository extends JpaRepository<Korisnik, Integer> {
 
     @Query("SELECT DISTINCT ku.korisnik FROM KorisnikUloga ku WHERE ku.uloga.naziv = :naziv")
     List<Korisnik> findByNazivUloge(String naziv);
+
+    List<Korisnik> findByOrganizacionaCelinaId(Integer celinaId);
 }

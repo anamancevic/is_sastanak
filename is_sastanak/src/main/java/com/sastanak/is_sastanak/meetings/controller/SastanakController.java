@@ -71,4 +71,8 @@ public class SastanakController {
             @RequestParam(defaultValue = "10") int velicina){
         return sastanakService.getSastanakStranica(strana, velicina);
         }
+        @GetMapping("/moji-zaposleni")
+        public List<Sastanak> getSastanciMojihZaposlenih(@RequestHeader("X-Korisnik") String korisnickoIme){
+        return sastanakService.getSastanciMojihZaposlenih(korisnickoIme);
+        }
 }

@@ -179,5 +179,10 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
         Pageable pageable = PageRequest.of(strana, velicina);
         return sastanakRepository.findAll(pageable);
     }
-
+    public List<Sastanak> getSastanciMojihZaposlenih(String korisnickoIme){
+        Korisnik prijavljeni = korisnikRepository.findByKorisnickoIme(korisnickoIme)
+                .orElseThrow(()-> new RuntimeException("Korisnik ne postoji!"));
+        Integer celinaId = prijavljeni.getOrganizacionaCelina().getId();
+        return sastanakUcesnikRepository.findSastanciByCelinaUcesnika(celinaId);
+    }
 }

@@ -33,4 +33,8 @@ public class KorisnikController {
     public List<Korisnik> getZapisnicari(){
         return korisnikService.getZapisnicari();
     }
+    @GetMapping("/moji-zaposleni")
+    public List<Korisnik> getMojiZaposleni(@RequestHeader(value = "X-Korisnik", required = false) String korisnickoIme){
+        return korisnikService.getMojiZaposleni(korisnickoIme);
+    }
 }

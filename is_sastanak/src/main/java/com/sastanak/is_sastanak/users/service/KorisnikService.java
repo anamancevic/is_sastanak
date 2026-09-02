@@ -91,4 +91,12 @@ public class KorisnikService {
     public List<Korisnik> getZapisnicari(){
         return korisnikRepository.findByNazivUloge("zapisnicar");
     }
+
+    public List<Korisnik> getMojiZaposleni(String korisnickoIme){
+        Korisnik prijavljeni = korisnikRepository.findByKorisnickoIme(korisnickoIme)
+                .orElseThrow(()-> new RuntimeException("Korisnik ne postoji!"));
+
+        Integer celinaId = prijavljeni.getOrganizacionaCelina().getId();
+        return korisnikRepository.findByOrganizacionaCelinaId(celinaId);
+    }
 }
