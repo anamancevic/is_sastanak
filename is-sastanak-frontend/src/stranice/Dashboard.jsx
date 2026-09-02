@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import "../stilovi.css";
+import Meni from "./Meni";
+import meetingSlika from "../assets/meeting.png";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -13,99 +15,36 @@ function Dashboard() {
   const jeUcesnik = korisnik.uloge.includes("ucesnik");
 
   return (
-    <div className="pozadina">
-      <div className="kartica">
-        <h2 className="naslov">
-          DOBRODOŠLI, {korisnik.ime}
-        </h2>
+        <div className="pocetna">
+            <Meni />
+            <div className="pocetna-sadrzaj">
+                {/* LEVA STRANA */}
+                <div className="pocetna-tekst">
+                    <p className="mali-tekst">
+                        SISTEM ZA UPRAVLJANJE SASTANCIMA
+                    </p>
+                    <h1>
+                        Dobrodošli, <span>{korisnik.ime}</span>
+                    </h1>
+                    <p className="opis-pocetne">
+                        Organizujte sastanke, pratite obaveštenja
+                        i jednostavno upravljajte svojim obavezama.
+                    </p>
+                    <p className="uloga-pocetna">
+                        Vaša uloga: <b>{korisnik.uloge.join(", ")}</b>
+                    </p>
+                </div>
 
-        <p className="tekst">
-          Uloga: {korisnik.uloge.join(", ")}
-        </p>
-
-
-        {/* Dugme za prebacivanje administratora za kreiranje korisnika */}
-        {jeAdmin &&
-          (<button onClick={() => navigate("/korisnici")}
-            className="dugme">
-            Upravljanje korisnicima
-          </button>)
-        }
-        {/* Dugme za prebacivanje administratora za dodelu uloge */}
-        {jeAdmin &&
-          <button onClick={() => navigate("/dodela-uloge")}
-            className="dugme">
-            Dodela uloge
-          </button>
-        }
-
-        {/* Dugme za sastanke */}
-        <button onClick={() => navigate("/sastanci")}
-          className="dugme">
-          Sastanci
-        </button>
-        
-        {/*Dugme za kalendar sa sastancima */}
-        {(jeAdmin || jeRukovodilac) &&
-         <button onClick={() => navigate("/kalendar")}
-            className="dugme">
-                Kalendar
-          </button>}
-          {/*Dugme za moje zaposlene */}
-          {(jeAdmin || jeRukovodilac) &&
-          <button onClick={()=> navigate("/moji-zaposleni")}
-          className="dugme">
-            Moji zaposleni
-            </button>}
-        {/* Dugme za zakazivanje sastanaka */}
-        {(jeAdmin || jeRukovodilac) &&
-          <button onClick={() => navigate("/zakazivanje-sastanka")}
-            className="dugme">
-            Zakaži sastanak
-          </button>}
-
-        {/* Dugme za ucesnike sastanka */}
-        {(jeAdmin || jeRukovodilac) &&
-          <button onClick={() => navigate("/ucesnici")}
-            className="dugme">
-            Učesnici sastanka
-          </button>
-        }
-
-        {/*Dugme za evidentiranje prisustva*/}
-        {(jeAdmin || jeRukovodilac || jeZapisnicar) &&
-          <button onClick={() => navigate("/prisustvo")}
-            className="dugme">
-            Evidentiranje prisustva
-          </button>
-        }
-
-        {/*Dugme za predloge*/}
-        {(jeAdmin || jeZapisnicar) &&
-          <button onClick={() => navigate("/predlozi")}
-            className="dugme">
-            Predlozi
-          </button>
-        }
-
-        {/*Dugme za prikaz izvestaja*/}
-        <button onClick={() => navigate("/izvestaji")}
-          className="dugme">
-          Izveštaji
-        </button>
-        {/*Dugme za prikaz obavestenja*/}
-        <button onClick={() => navigate("/obavestenja")}
-          className="dugme">
-          Obavestenja
-        </button>
-        {/* Dugme za odjavu */}
-        <button onClick={() => { localStorage.removeItem("korisnik"); navigate("/"); }}
-          className="dugme">
-          Odjavi se
-        </button>
-      </div>
-    </div>
-  );
+                {/* DESNA STRANA */}
+                <div className="pocetna-slika">
+                    <img
+                        src={meetingSlika}
+                        alt="Poslovni sastanak"
+                    />
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export default Dashboard;
