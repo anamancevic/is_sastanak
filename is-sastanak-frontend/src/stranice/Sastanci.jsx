@@ -70,8 +70,7 @@ function SastanakKartica({ sastanak }) {
             {(jeAdmin || jeRukovodilac || jeZapisnicar) && (
                 <button
                     onClick={() => setPrikaziFormu(!prikaziFormu)}
-                    className="dugme"
-                    style={{ width: "auto", padding: "8px 16px", marginTop: "8px" }}
+                    className="sastanak-dugme"
                 >
                     {prikaziFormu ? "Zatvori" : "Izmeni status"}
                 </button>
@@ -123,6 +122,9 @@ function Sastanci() {
 
     const [klasifikacija, setKlasifikacija] = useState("sve");//da li je sve, maticna ili druga
 
+    const[filtriraniSastanci, setFiltriraniSastanci] = useState([]);
+    const velicinaStrane = 2;
+
     useEffect(() => {
         async function ucitajCeline() {
             try {
@@ -166,7 +168,10 @@ function Sastanci() {
     }
 
     async function filtrirajKlasifikaciju(vrsta) {
+        setKlasifikacija(vrsta);
+        setStrana(0);
         if (vrsta === "sve") {
+            setFiltriraniSastanci([]);
             ucitajSastanke(0);//vraca klasicno na paginaciju
             return;
         }
@@ -176,18 +181,24 @@ function Sastanci() {
             const svi = await odgovor.json();
 
             const filtrirani = svi.filter((s) => {
-                if (!s.rukovodilac || !s.rukovodilac.organizacionaCelina) {
+                if (!s.organizacionaCelina || !s.rukovodilac || !s.rukovodilac.organizacionaCelina) {
                     return false;
                 }
                 const istaCelina = s.organizacionaCelina.id === s.rukovodilac.organizacionaCelina.id;
                 return vrsta === "maticna" ? istaCelina : !istaCelina;
             });
-            setSastanci(filtrirani);
-            setUkupnoStrana(0);//sakrivamo paginaciju kod klasifikacije
+            setFiltriraniSastanci(filtrirani);
+            setUkupnoStrana(Math.ceil(filtrirani.length/ velicinaStrane));
         } catch (greska) {
             console.log("Greska pri filtriranju klasifikacije!");
         }
     }
+
+    /*Za filtriranje maticna/druga */
+    const pocetak = strana * velicinaStrane;
+    const kraj = pocetak + velicinaStrane;
+    const sastanciZaPrikaz = klasifikacija === "sve"
+                                ? sastanci : filtriraniSastanci.slice(pocetak, kraj);
 
     return (
         <div className="pozadina">
@@ -250,7 +261,7 @@ function Sastanci() {
                     </button>
                 </div>
                 <div className="sastanci-lista">
-                    {sastanci.map((s) => (
+                    {sastanciZaPrikaz.map((s) => (
                         <SastanakKartica key={s.id} sastanak={s} />
                     ))}
                 </div>

@@ -32,6 +32,12 @@
 .dugme2:hover {
     background-color: #5b3f88;
 }
+.sastanak-dugme {
+    width: auto;
+    align-self: flex-start;
+    margin-top: auto;
+    padding: 8px 16px;
+}
 
 
 /* INPUT POLJA */
@@ -127,6 +133,8 @@
     border-radius: 10px;
     border: 1px solid #eeeaf5;
     margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
 }
 
 
@@ -339,6 +347,7 @@
     height: auto;
     object-fit: contain;
 }
+
 .korisnici-sadrzaj {
     width: 85%;
     max-width: 1100px;
@@ -382,4 +391,10 @@
     gap: 12px;
     margin-top: 25px;
     color: #5f576c;
+}
+
+/*KALENDAR*/
+.react-calendar {
+    width: 100%;
+    max-width: 500px;
 }

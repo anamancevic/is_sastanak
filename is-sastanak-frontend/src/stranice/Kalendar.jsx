@@ -81,30 +81,42 @@ function Kalendar() {
 
     return (
         <div className="pozadina">
-            <Meni/>
-            <div className="kartica" style={{ width: "80%", maxWidth: "900px" }}>
-                <h2 className="naslov">Kalendar sastanaka</h2>
-
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
-                    <Calendar
-                        onChange={setIzabraniDatum}
-                        value={izabraniDatum}
-                    />
+            <Meni />
+            <div className="korisnici-sadrzaj">
+                <div className="korisnici-forma">
+                    <div>
+                         <h2 className="naslov" style={{textAlign: "left"}}>Kalendar sastanaka</h2>
+                        <h3 className="podnaslov">Izaberite datum</h3>
+                        <Calendar
+                            onChange={setIzabraniDatum}
+                            value={izabraniDatum}
+                            style={{ width: "100%", maxWidth: "none" }}
+                        />
+                    </div>
+                    <div>
+                        <h3 className="podnaslov">
+                            Sastanci za {izabraniDatum.toLocaleDateString("sr-RS")}
+                        </h3>
+                        {sastanciZaDatum.length === 0 ? (
+                            <p className="tekst">Nema sastanaka za ovaj datum.</p>
+                        ) : (
+                            sastanciZaDatum.map((s) => (
+                                <SastanakUKalendaru
+                                    key={s.id}
+                                    sastanak={s}
+                                />
+                            ))
+                        )}
+                    </div>
                 </div>
-
-                <h3 className="podnaslov">
-                    Sastanci za {izabraniDatum.toLocaleDateString("sr-RS")}
-                </h3>
-
-                {sastanciZaDatum.length === 0 ? (
-                    <p className="tekst">Nema sastanaka za ovaj datum.</p>
-                ) : (
-                    sastanciZaDatum.map((s) => (
-                       <SastanakUKalendaru key = {s.id} sastanak = {s}/>
-                    ))
-                )}
-
-                <button onClick={() => navigate("/dashboard")} className="dugme">Nazad</button>
+                <div className="korisnici-dugmad">
+                    <button
+                        onClick={() => navigate("/dashboard")}
+                        className="dugme"
+                    >
+                        Nazad
+                    </button>
+                </div>
             </div>
         </div>
     );
