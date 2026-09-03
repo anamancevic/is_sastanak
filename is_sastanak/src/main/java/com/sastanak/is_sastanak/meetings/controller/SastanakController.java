@@ -84,4 +84,9 @@ public class SastanakController {
     public List<Sastanak> getSastanakZaKorisnika(@RequestHeader("X-Korisnik") String korisnickoIme){
         return sastanakService.getSastanciZaKorisnika(korisnickoIme);
         }
+    @GetMapping("/moje-ucesce")
+    public List<Sastanak> getMojeUcesce(@RequestHeader("X-Korisnik") String korisnickoIme,
+                                        @RequestParam(defaultValue = "godina") String period){
+        return sastanakService.getMojeUcesce(korisnickoIme, period);
+    }
 }

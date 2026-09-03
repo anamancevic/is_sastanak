@@ -39,33 +39,58 @@ function Obavestenja() {
     }
 
     return (
-        <div className="pozadina">
-            <Meni/>
-            <div className="kartica" style={{ width: "80%", maxWidth: "600px" }}>
-                <h2 className="naslov">Obavestenja</h2>
-
+        <div
+            className="pozadina"
+            style={{ alignItems: "flex-start" }}>
+            <Meni />
+            <div
+                className="korisnici-sadrzaj"
+                style={{ maxWidth: "800px" }}>
+                <h2
+                    className="naslov"
+                    style={{ textAlign: "left" }}>
+                    Obaveštenja
+                </h2>
                 {obavestenja.length === 0 ? (
-                    <p className="tekst">Nema obavestenja!</p>
+                    <p className="tekst">
+                        Nema obaveštenja.
+                    </p>
                 ) : (
                     obavestenja.map((o) => (
-                        <div key={o.id}
+                        <div
+                            key={o.id}
                             style={{
-                                backgroundColor: o.procitano ? "#f5f0eb" : "#faf7f3",
-                                padding: "12px 16px",
-                                borderRadius: "8px",
-                                marginBottom: "10px",
-                                borderLeft: o.procitano ? "4px solid #d6ccc2" : "4px solid #7a8b6f"
+                                padding: "20px 0 20px 18px",
+                                marginBottom: "5px",
+                                borderBottom: "1px solid #eeeaf5",
+                                borderLeft: o.procitano
+                                    ? "4px solid #ddd7e8"
+                                    : "4px solid #6d55a3"
                             }}>
-                            <p style={{ color: "#54463d", marginBottom: "6px" }}>{o.sadrzaj}</p>
-                            <p style={{ color: "#8a8078", fontSize: "12px", marginBottom: "8px" }}>
-                                {o.datumVreme}
+                            <p
+                                className="tekst"
+                                style={{
+                                    color: o.procitano ? "#81798d" : "#4d455b",
+                                    fontWeight: o.procitano ? "normal" : "600",
+                                    marginBottom: "8px"
+                                }}>
+                                {o.sadrzaj}
+                            </p>
+                            <p
+                                className="tekst"
+                                style={{
+                                    fontSize: "12px",
+                                    marginBottom: o.procitano ? "0" : "12px"
+                                }}>
+                                {new Date(o.datumVreme).toLocaleString("sr-RS")}
                             </p>
                             {!o.procitano && (
-                                <button onClick={() => oznaciProcitano(o.id)}
-                                    className="dugme"
+                                <button
+                                    onClick={() => oznaciProcitano(o.id)}
+                                    className="dugme2"
                                     style={{
-                                        width: "auto", padding: "6px 12px",
-                                        marginTop: 0, fontSize: "13px"
+                                        padding: "7px 12px",
+                                        fontSize: "13px"
                                     }}>
                                     Označi kao pročitano
                                 </button>
@@ -73,36 +98,47 @@ function Obavestenja() {
                         </div>
                     ))
                 )}
-                {ukupnoStrana > 0 && (
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "12px", marginTop: "16px" }}>
+                {ukupnoStrana > 1 && (
+                    <div className="sastanci-paginacija">
                         <button
                             onClick={() => ucitajObavestenja(strana - 1)}
                             disabled={strana === 0}
                             className="dugme"
-                            style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}>
+                            style={{
+                                width: "auto",
+                                padding: "8px 16px",
+                                marginTop: "0",
+                                opacity: strana === 0 ? 0.45 : 1
+                            }}>
                             Prethodna
                         </button>
-
-                        <span style={{ color: "#54463d" }}>
+                        <span>
                             Strana {strana + 1} od {ukupnoStrana}
                         </span>
-
                         <button
                             onClick={() => ucitajObavestenja(strana + 1)}
                             disabled={strana >= ukupnoStrana - 1}
                             className="dugme"
-                            style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}>
+                            style={{
+                                width: "auto",
+                                padding: "8px 16px",
+                                marginTop: "0",
+                                opacity: strana >= ukupnoStrana - 1 ? 0.45 : 1
+                            }}>
                             Sledeća
                         </button>
                     </div>
                 )}
-                <button onClick={() => navigate("/dashboard")}
-                    className="dugme">
-                    Nazad
-                </button>
+                <div className="korisnici-dugmad">
+                    <button
+                        onClick={() => navigate("/dashboard")}
+                        className="dugme2">
+                        Nazad
+                    </button>
+                </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default Obavestenja;

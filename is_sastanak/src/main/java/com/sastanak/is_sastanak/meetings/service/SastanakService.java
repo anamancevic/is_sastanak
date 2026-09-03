@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.beans.JavaBean;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -262,5 +264,27 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
     else {
         return sastanakRepository.findSastanciKorisnika(prijavljeni.getId());
     }
+    }
+
+    public List<Sastanak> getMojeUcesce(String korisnickoIme, String period){
+        Korisnik prijavljeni = korisnikRepository.findByKorisnickoIme(korisnickoIme)
+                .orElseThrow(()-> new RuntimeException("Korisnik ne postoji!"));
+
+        List<Sastanak> moji = sastanakRepository.findSastanciKorisnika(prijavljeni.getId());
+
+        java.time.LocalDate danas = java.time.LocalDate.now();
+        java.time.LocalDateTime odDatuma;
+
+        if (period.equals("mesec")){
+            odDatuma = danas.withDayOfMonth(1).atStartOfDay();
+        }else {
+            odDatuma = danas.withDayOfYear(1).atStartOfDay();
+        }
+        LocalDateTime sada = LocalDateTime.now();
+        java.time.LocalDateTime granica = odDatuma;
+        return moji.stream()
+                .filter(s->s.getDatumOdrzavanja() != null && !s.getDatumOdrzavanja().isBefore(granica)
+                && !s.getDatumOdrzavanja().isAfter(sada))
+                .toList();
     }
 }
