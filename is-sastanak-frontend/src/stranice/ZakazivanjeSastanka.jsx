@@ -17,8 +17,8 @@ function ZakazivanjeSastanka() {
     const [rukovodilacId, setRukovodilacId] = useState("");
     const [organizacionaCelinaId, setOrganizacionaCelinaId] = useState("");
 
-    const[zapisnicarId, setZapisnicarId] = useState("");
-    const[zapisnicari, setZapisnicari] = useState([]);
+    const [zapisnicarId, setZapisnicarId] = useState("");
+    const [zapisnicari, setZapisnicari] = useState([]);
 
     const [tacke, setTacke] = useState([{ redniBroj: 1, sadrzaj: "" }]);
 
@@ -89,9 +89,10 @@ function ZakazivanjeSastanka() {
         try {
             const odgovor = await fetch("http://localhost:8080/api/sastanci", {
                 method: "POST",
-                headers: { "Content-Type": "application/json",
-                    "X-Korisnik": korisnik.korisnickoIme 
-                 },
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Korisnik": korisnik.korisnickoIme
+                },
                 body: JSON.stringify({
                     tema: tema,
                     datumOdrzavanja: datumOdrzavanja,
@@ -126,132 +127,117 @@ function ZakazivanjeSastanka() {
 
     return (
         <div className="pozadina">
-            <Meni/>
-            <div className="kartica" style={{ width: "80%", maxWidth: "1000px" }}>
-                <h2 className="naslov">
-                    Zakazivanje sastanka
-                </h2>
-                <div style={{ display: "flex", gap: "24px" }}>
-                    <div style={{ flex: 1 }}>
-
-                        {/* polja za unos teme */}
+            <Meni />
+            <div className="korisnici-sadrzaj">
+                <h2 className="naslov">Zakazivanje sastanka</h2>
+                <div className="korisnici-forma">
+                    <div>
+                        <h3 className="podnaslov" style={{ fontSize: "20px", marginBottom: "20px" }}>
+                            Podaci o sastanku
+                        </h3>
                         <input
                             type="text"
                             placeholder="Tema sastanka"
                             value={tema}
                             onChange={(e) => setTema(e.target.value)}
-                            className="polje" />
-
-                        {/* polje za unos datuma */}
+                            className="polje"/>
                         <input
                             type="datetime-local"
                             value={datumOdrzavanja}
                             onChange={(e) => setDatumOdrzavanja(e.target.value)}
-                            className="polje" />
-
-                        {/* polja za unos prostorije */}
+                            className="polje"/>
                         <input
                             type="text"
                             placeholder="Prostorija"
                             value={prostorija}
                             onChange={(e) => setProstorija(e.target.value)}
-                            className="polje" />
-
-                        {/* padajuca lista za unos tipa*/}
-                        <select value={tip} onChange={(e) => setTip(e.target.value)}
-                            className="polje">
+                            className="polje"/>
+                        <select value={tip} onChange={(e) => setTip(e.target.value)} className="polje">
                             <option value="VANREDNI">Vanredni</option>
                             <option value="STALNI">Stalni</option>
                         </select>
-
-                        {/* padajuca lista za unos kategorije*/}
-                        <select value={kategorijaId} onChange={(e) => setKategorijaId(e.target.value)}
+                        <select
+                            value={kategorijaId}
+                            onChange={(e) => setKategorijaId(e.target.value)}
                             className="polje">
-                            <option value="">--Izaberi kategoriju--</option>
+                            <option value="">-- Izaberi kategoriju --</option>
                             {kategorije.map((k) => (
-                                <option key={k.id} value={k.id}>{k.naziv}</option>
+                                <option key={k.id} value={k.id}>
+                                    {k.naziv}
+                                </option>
                             ))}
                         </select>
-
-                        {/* padajuca lista za unos celine*/}
-                        <select value={organizacionaCelinaId} onChange={(e) => setOrganizacionaCelinaId(e.target.value)}
+                        <select
+                            value={organizacionaCelinaId}
+                            onChange={(e) => setOrganizacionaCelinaId(e.target.value)}
                             className="polje">
-                            <option value="">--Izaberi celinu--</option>
+                            <option value="">-- Izaberi organizacionu celinu --</option>
                             {celine.map((c) => (
-                                <option key={c.id} value={c.id}>{c.naziv}</option>
+                                <option key={c.id} value={c.id}>
+                                    {c.naziv}
+                                </option>
                             ))}
                         </select>
-
-                        {/*Padajuca lista za unos zapisnicara sastanka */}
-                            <select value={zapisnicarId} 
-                            onChange={(e)=> setZapisnicarId(e.target.value)}
+                        <select
+                            value={zapisnicarId}
+                            onChange={(e) => setZapisnicarId(e.target.value)}
                             className="polje">
-                                <option value= "">--Izaberi zapisničara sastanka--</option>
-                                {zapisnicari.map((z)=> (
-                                    <option key={z.id} 
-                                    value = {z.id}>
-                                        {z.ime} {z.prezime}
-                                    </option>
-                                ))}
-                            </select>
-                    </div>
-
-                    <div style={{ flex: 1.3 }}>
-                        <div className="kartica2">
-                            <h3 className="podnaslov">
-                                Tačke dnevnog reda
-                            </h3>
-                            {tacke.map((t, index) => (
-                                <div key={index}
-                                    style={{
-                                        display: "flex", gap: "8px",
-                                        marginBottom: "8px", alignItems: "center"
-                                    }}>
-                                    {/* polje za unos tačke*/}
-                                    <input
-                                        type="text"
-                                        placeholder={"Tačka: " + (index + 1)}
-                                        value={t.sadrzaj}
-                                        onChange={(e) => izmeniTacku(index, e.target.value)}
-                                        className="polje"
-                                        style={{ marginBottom: 0, flex: 1 }} />
-                                    {/* dugme za brisanje tačke*/}
-                                    <button onClick={() => obrisiTacku(index)}
-                                        className="dugme"
-                                        style={{
-                                            width: "auto", padding: "8px 12px",
-                                            marginTop: 0, flexShrink: 0
-                                        }}>
-                                        Obriši tačku
-                                    </button>
-                                </div>
+                            <option value="">-- Izaberi zapisničara sastanka --</option>
+                            {zapisnicari.map((z) => (
+                                <option key={z.id} value={z.id}>
+                                    {z.ime} {z.prezime}
+                                </option>
                             ))}
-
-                            <button onClick={dodajTacku}
-                                className="dugme">
-                                Dodaj tačku
-                            </button>
-                        </div>
+                        </select>
                     </div>
-
+                    <div>
+                        <h3 className="podnaslov" style={{ fontSize: "20px", marginBottom: "20px" }}>
+                            Tačke dnevnog reda
+                        </h3>
+                        {tacke.map((t, index) => (
+                            <div
+                                key={index}
+                                style={{
+                                    display: "flex",
+                                    gap: "10px",
+                                    alignItems: "center",
+                                    marginBottom: "16px"
+                                }}>
+                                <input
+                                    type="text"
+                                    placeholder={"Tačka " + (index + 1)}
+                                    value={t.sadrzaj}
+                                    onChange={(e) => izmeniTacku(index, e.target.value)}
+                                    className="polje"
+                                    style={{ flex: 1, marginBottom: "0" }}/>
+                                <button
+                                    onClick={() => obrisiTacku(index)}
+                                    className="dugme2"
+                                    style={{ flexShrink: 0 }}  >
+                                    Obriši
+                                </button>
+                            </div>
+                        ))}
+                        <button
+                            onClick={dodajTacku}
+                            className="dugme"
+                            style={{ width: "auto", marginTop: "4px" }}>
+                            Dodaj tačku
+                        </button>
+                    </div>
                 </div>
-
-
-                <button onClick={zakaziSastanak} className="dugme">
-                    Zakaži sastanak
-                </button>
-                <button onClick={() => navigate("/dashboard")}
-                    className="dugme">
-                    Nazad
-                </button>
-
-                <p className="tekst">
-                    {poruka}
-                </p>
-
+                <div className="korisnici-dugmad">
+                    <button onClick={zakaziSastanak} className="dugme">
+                        Zakaži sastanak
+                    </button>
+                    <button onClick={() => navigate("/dashboard")} className="dugme2">
+                        Nazad
+                    </button>
+                </div>
+                {poruka && <p className="tekst">{poruka}</p>}
             </div>
         </div>
-    )
+    );
 }
 
 export default ZakazivanjeSastanka;

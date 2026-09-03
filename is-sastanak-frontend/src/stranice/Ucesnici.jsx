@@ -40,8 +40,8 @@ function Ucesnici() {
     }
 
     function proveraUnosa() {
-        if(sastanakId === "") return "Morate izabrati sastanak!";
-        if(korisnikId === "") return "Morate izabrati korisnika koji je učesnik!";
+        if (sastanakId === "") return "Morate izabrati sastanak!";
+        if (korisnikId === "") return "Morate izabrati korisnika koji je učesnik!";
         return "";
     }
 
@@ -56,9 +56,10 @@ function Ucesnici() {
         try {
             const odgovor = await fetch("http://localhost:8080/api/sastanci/dodaj-ucesnika", {
                 method: "POST",
-                headers: { "Content-Type": "application/json",
-                    "X-Korisnik": korisnik.korisnickoIme  
-                 },
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Korisnik": korisnik.korisnickoIme
+                },
                 body: JSON.stringify({
                     sastanakId: sastanakId,
                     korisnikId: korisnikId
@@ -78,12 +79,16 @@ function Ucesnici() {
     }
     return (
         <div className="pozadina">
-            <Meni/>
-            <div className="kartica">
+            <Meni />
+            <div className="korisnici-sadrzaj">
                 <h2 className="naslov">
-                    Ucesnici sastanka
+                    Učesnici sastanka
                 </h2>
-                {/* padajuca lista sastanaka */}
+                <h3
+                    className="podnaslov"
+                    style={{ fontSize: "20px", marginBottom: "12px" }}>
+                    Izaberite sastanak
+                </h3>
                 <select
                     value={sastanakId}
                     onChange={(e) => {
@@ -91,52 +96,90 @@ function Ucesnici() {
                         ucitajUcesnike(e.target.value);
                     }}
                     className="polje">
-                    <option value="">--Izaberi sastanak--</option>
+                    <option value="">
+                        -- Izaberi sastanak --
+                    </option>
                     {sastanci.map((s) => (
-                        <option key={s.id} value={s.id}>{s.tema}</option>
-                    ))}
-                </select>
-
-                <h3 className="podnaslov">Trenutni ucesnici</h3>
-                {/* spisak svih ucesnika tog sastanka */}
-                {ucesnici.length == 0 ? (
-                    <p className="tekst">Nema ucesnika sastanka</p>) :
-                    (<ul style={{ marginBottom: "16px", paddingLeft: "20px" }}>
-                        {ucesnici.map((u) => (
-                            <li key={u.id} style={{ color: "#54463d", marginBottom: "4px" }}>
-                                {u.korisnik.ime} {u.korisnik.prezime}
-                            </li>
-                        ))}
-                    </ul>
-                    )}
-                <h3 className="podnaslov">Dodaj novog ucesnika</h3>
-                {/* dodavanje novog ucesnika*/}
-                <select value={korisnikId}
-                    onChange={(e) => setKorisnikId(e.target.value)}
-                    className="polje">
-                    <option value="">-- Izaberi korisnika --</option>
-                    {korisnici.map((k) => (
-                        <option key={k.id} value={k.id}>
-                            {k.ime} {k.prezime}
+                        <option key={s.id} value={s.id}>
+                            {s.tema}
                         </option>
                     ))}
                 </select>
-
-                <button onClick={dodajUcesnika}
-                    className="dugme"> Dodaj učesnika</button>
-
+                <div className="korisnici-forma">
+                    <div>
+                        <h3
+                            className="podnaslov"
+                            style={{ fontSize: "20px", marginBottom: "20px" }}>
+                            Trenutni učesnici
+                        </h3>
+                        {ucesnici.length === 0 ? (
+                            <p className="tekst">
+                                Nema učesnika sastanka.
+                            </p>
+                        ) : (
+                            <ul
+                                style={{
+                                    listStyle: "none",
+                                    padding: "0",
+                                    margin: "0"
+                                }}>
+                                {ucesnici.map((u) => (
+                                    <li
+                                        key={u.id}
+                                        style={{
+                                            padding: "14px 0",
+                                            borderBottom: "1px solid #eeeaf5",
+                                            color: "#5f576c",
+                                            fontSize: "15px"
+                                        }}>
+                                        {u.korisnik.ime} {u.korisnik.prezime}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                    <div>
+                        <h3
+                            className="podnaslov"
+                            style={{ fontSize: "20px", marginBottom: "20px" }}>
+                            Dodaj novog učesnika
+                        </h3>
+                        <select
+                            value={korisnikId}
+                            onChange={(e) => setKorisnikId(e.target.value)}
+                            className="polje">
+                            <option value="">
+                                -- Izaberi korisnika --
+                            </option>
+                            {korisnici.map((k) => (
+                                <option key={k.id} value={k.id}>
+                                    {k.ime} {k.prezime}
+                                </option>
+                            ))}
+                        </select>
+                        <button
+                            onClick={dodajUcesnika}
+                            className="dugme"
+                            style={{ width: "auto" }}>
+                            Dodaj učesnika
+                        </button>
+                    </div>
+                </div>
+                <div className="korisnici-dugmad">
+                    <button
+                        onClick={() => navigate("/dashboard")}
+                        className="dugme2">
+                        Nazad
+                    </button>
+                </div>
                 {poruka && (
-                    <p className="tekst">{poruka}</p>
+                    <p className="tekst">
+                        {poruka}
+                    </p>
                 )}
-
-                <button onClick={() => navigate("/dashboard")}
-                    className="dugme">
-                    Nazad
-                </button>
             </div>
-
         </div>
-    )
+    );
 
 }
 export default Ucesnici;

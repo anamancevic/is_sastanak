@@ -23,25 +23,77 @@ function SastanakSaUcesnicima({ sastanak, mojaCelinaNaziv }) {
     }, []);
 
     return (
-        <div className="tacka-kartica">
-            <p className="tekst" style={{ fontWeight: "bold" }}>{sastanak.tema}</p>
-            <p style={{ color: "#54463d", fontSize: "14px" }}>
-                {new Date(sastanak.datumOdrzavanja).toLocaleDateString("sr-RS")} | {sastanak.status}
-            </p>
-            <p style={{ color: "#7a8b6f", fontSize: "13px", fontWeight: "bold", marginTop: "6px" }}>
-                Učestvovali iz moje celine:
-            </p>
-            {mojiUcesnici.length === 0 ? (
-                <p style={{ color: "#8a8078", fontSize: "13px" }}>Niko.</p>
-            ) : (
-                <ul style={{ listStyle: "none", paddingLeft: "10px" }}>
-                    {mojiUcesnici.map((k) => (
-                        <li key={k.id} style={{ color: "#54463d", fontSize: "13px" }}>
-                            {k.ime} {k.prezime}
-                        </li>
-                    ))}
-                </ul>
-            )}
+        <div
+            style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                gap: "30px",
+                padding: "25px 0",
+                borderBottom: "1px solid #eeeaf5"
+            }}
+        >
+            <div style={{ flex: 1 }}>
+                <p
+                    className="podnaslov"
+                    style={{
+                        fontSize: "20px",
+                        marginBottom: "12px",
+                        color: "#8d8598"
+                    }}
+                >
+                    {sastanak.tema}
+                </p>
+                <p
+                    className="tekst"
+                    style={{
+                        marginBottom: "0",
+                        fontSize: "15px"
+                    }}    >
+                    {new Date(
+                        sastanak.datumOdrzavanja
+                    ).toLocaleDateString("sr-RS")}{" "}
+                    | {sastanak.status}
+                </p>
+            </div>
+            <div
+                style={{
+                    flex: 1,
+                    textAlign: "left"
+                }} >
+                <p
+                    className="tekst"
+                    style={{
+                        fontSize: "16px",
+                        fontWeight: "600",
+                        color: "#8d8598",
+                        marginBottom: "10px"
+                    }} >
+                    Učestvovali iz moje celine:
+                </p>
+                {mojiUcesnici.length === 0 ? (
+                    <p className="tekst">Niko.</p>
+                ) : (
+                    <ul
+                        style={{
+                            listStyle: "none",
+                            padding: "0",
+                            margin: "0"
+                        }}>
+                        {mojiUcesnici.map((k) => (
+                            <li
+                                key={k.id}
+                                className="tekst"
+                                style={{
+                                    fontSize: "15px",
+                                    marginBottom: "5px"
+                                }}>
+                                {k.ime} {k.prezime}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
         </div>
     );
 }
@@ -72,53 +124,77 @@ function MojiZaposleni() {
     }, []);
     return (
         <div className="pozadina">
-            <Meni/>
-            <div className="kartica"
-                style={{ width: "80%", maxWidth: "1000px" }}>
-                <h2 className="naslov">Pregled zaposlenih i sastanaka</h2>
-
-                <div style={{ display: "flex", gap: "24px", alignItems: "flex-start" }}>
-                    {/* LEVA KOLONA - zaposleni */}
-                    <div style={{ flex: 1 }}>
-                        <h3 className="podnaslov">Zaposleni u mojoj celini</h3>
+            <Meni />
+            <div className="korisnici-sadrzaj">
+                <h2 className="naslov">
+                    Pregled zaposlenih i sastanaka
+                </h2>
+                <div className="korisnici-forma">
+                    <div>
+                        <h3 className="podnaslov" style={{ fontSize: "22px" }}>
+                            Zaposleni u mojoj celini
+                        </h3>
                         {zaposleni.length === 0 ? (
                             <p className="tekst">Nema zaposlenih.</p>
                         ) : (
                             zaposleni.map((z) => (
-                                <div key={z.id} className="tacka-kartica">
-                                    <p className="tekst" style={{ fontWeight: "bold" }}>
+                                <div key={z.id} style={{
+                                    padding: "25px 0",
+                                    marginBottom: "15px"
+                                }}>
+                                    <p
+                                        className="tekst"
+                                        style={{
+                                            fontSize: "20px",
+                                            marginBottom: "12px",
+                                            fontWeight: "bold",
+                                            color: "#8d8598"
+                                        }}
+                                    >
                                         {z.ime} {z.prezime}
                                     </p>
-                                    <p style={{ color: "#54463d", fontSize: "14px" }}>
-                                        {z.radnoMesto || "—"} | {z.korisnickoIme}
+                                    <p className="tekst" style={{ marginBottom: "5px" }}>
+                                        Radno mesto: {z.radnoMesto || "Nije navedeno"}
+                                    </p>
+                                    <p className="tekst" style={{ marginBottom: "5px" }}>
+                                        Korisničko ime: {z.korisnickoIme}
                                     </p>
                                     {z.mejl && (
-                                        <p style={{ color: "#8a8078", fontSize: "13px" }}>{z.mejl}</p>
+                                        <p className="tekst" style={{ marginBottom: "0" }}>
+                                            E-mail: {z.mejl}
+                                        </p>
                                     )}
                                 </div>
                             ))
                         )}
                     </div>
-
-                    {/* DESNA KOLONA - sastanci */}
-                    <div style={{ flex: 1 }}>
-                        <h3 className="podnaslov">Sastanci mojih zaposlenih</h3>
+                    <div>
+                        <h3 className="podnaslov" style={{ fontSize: "22px" }}>
+                            Sastanci mojih zaposlenih
+                        </h3>
                         {sastanci.length === 0 ? (
-                            <p className="tekst">Nema sastanaka</p>
+                            <p className="tekst">Nema sastanaka.</p>
                         ) : (
                             sastanci.map((s) => (
-                                <SastanakSaUcesnicima key={s.id} sastanak={s} mojaCelinaNaziv={korisnik.organizacionaCelina} />
+                                <SastanakSaUcesnicima
+                                    key={s.id}
+                                    sastanak={s}
+                                    mojaCelinaNaziv={korisnik.organizacionaCelina}
+                                />
                             ))
                         )}
                     </div>
                 </div>
-                <button onClick={() => navigate("/dashboard")}
-                    className="dugme">
-                    Nazad
-                </button>
+                <div className="korisnici-dugmad">
+                    <button
+                        onClick={() => navigate("/dashboard")}
+                        className="dugme"
+                    >
+                        Nazad
+                    </button>
+                </div>
             </div>
         </div>
     );
-
 }
 export default MojiZaposleni;

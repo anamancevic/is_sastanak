@@ -10,6 +10,8 @@ function Prisustvo() {
     const [sastanakId, setSastanakId] = useState("");
     const [poruka, setPoruka] = useState("");
 
+    const [evidencija, setEvidencija] = useState({});
+
     useEffect(() => {
         async function ucitaj() {
             try {
@@ -23,12 +25,37 @@ function Prisustvo() {
     }, []);
 
     async function ucitajUcesnike(id) {
-        try {
-            const odgovor = await fetch("http://localhost:8080/api/sastanci/" + id + "/ucesnici");
-            setUcesnici(await odgovor.json());
+        if (id === "") {
+            setUcesnici([]);
+            setEvidencija({});
+            return;
+        }
 
+        try {
+            const odgovorUcesnici = await fetch(
+                "http://localhost:8080/api/sastanci/" + id + "/ucesnici"
+            );
+
+            const podaciUcesnici = await odgovorUcesnici.json();
+            setUcesnici(podaciUcesnici);
+
+            const odgovorPrisustvo = await fetch(
+                "http://localhost:8080/api/sastanci/" + id + "/prisustvo"
+            );
+
+            const podaciPrisustvo = await odgovorPrisustvo.json();
+
+            const evidentiraniStatusi = {};
+
+            podaciPrisustvo.forEach((p) => {
+                if (p.korisnik) {
+                    evidentiraniStatusi[p.korisnik.id] = p.status;
+                }
+            });
+
+            setEvidencija(evidentiraniStatusi);
         } catch (greska) {
-            console.log("Greska pri ucitavanju ucesnika!");
+            console.log("Greška pri učitavanju učesnika i prisustva!");
         }
     }
     async function evidentiraj(korisnikId, status) {
@@ -37,9 +64,10 @@ function Prisustvo() {
         try {
             const odgovor = await fetch("http://localhost:8080/api/sastanci/evidentiraj-prisustvo", {
                 method: "POST",
-                headers: { "Content-Type": "application/json",
+                headers: {
+                    "Content-Type": "application/json",
                     "X-Korisnik": korisnik.korisnickoIme
-                 },
+                },
                 body: JSON.stringify({
                     sastanakId: sastanakId,
                     korisnikId: korisnikId,
@@ -50,6 +78,10 @@ function Prisustvo() {
                 setPoruka("Greska pri evidentiranju!");
                 return;
             }
+            setEvidencija((prethodnaEvidencija) => ({
+                ...prethodnaEvidencija,
+                [korisnikId]: status
+            }));
             setPoruka("Uspesno evidentirao!");
 
         } catch (greska) {
@@ -59,65 +91,114 @@ function Prisustvo() {
     }
     return (
         <div className="pozadina">
-            <Meni/>
-            <div className="kartica" style={{ width: "500px" }}>
-                <h2 className="naslov"> Evidentiranje prisustva </h2>
+            <Meni />
+            <div className="korisnici-sadrzaj">
+                <h2 className="naslov">
+                    Evidentiranje prisustva
+                </h2>
+                <div className="korisnici-forma">
+                    <div>
+                        <h3
+                            className="podnaslov"
+                            style={{ fontSize: "20px", marginBottom: "20px" }}>
+                            Izaberite sastanak
+                        </h3>
+                        <select
+                            value={sastanakId}
+                            onChange={(e) => {
+                                setSastanakId(e.target.value);
+                                if (e.target.value !== "") {
+                                    ucitajUcesnike(e.target.value);
+                                } else {
+                                    setUcesnici([]);
+                                }
+                            }}
+                            className="polje">
+                            <option value="">
+                                -- Izaberi sastanak --
+                            </option>
+                            {sastanci.map((s) => (
+                                <option key={s.id} value={s.id}>
+                                    {s.tema}
+                                </option>
+                            ))}
+                        </select>
+                        <p className="tekst">
+                            Izaberite sastanak, a zatim za svakog učesnika evidentirajte da li je prisutan ili odsutan.
+                        </p>
+                    </div>
+                    <div>
+                        <h3
+                            className="podnaslov"
+                            style={{ fontSize: "20px", marginBottom: "20px" }}>
+                            Učesnici sastanka
+                        </h3>
+                        {ucesnici.length === 0 ? (
+                            <p className="tekst">
+                                Izaberite sastanak da biste videli učesnike.
+                            </p>
+                        ) : (
+                            ucesnici.map((u) => (
+                                <div
+                                    key={u.id}
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        gap: "15px",
+                                        padding: "15px 0",
+                                        borderBottom: "1px solid #eeeaf5"
+                                    }}>
+                                    <span
+                                        className="tekst"
+                                        style={{
+                                            marginBottom: "0",
+                                            fontWeight: "600"
+                                        }}>
+                                        {u.korisnik.ime} {u.korisnik.prezime}
+                                    </span>
+                                    <div style={{ display: "flex", gap: "8px" }}>
+                                        <button
+                                            onClick={() => evidentiraj(u.korisnik.id, "PRISUTAN")}
+                                            className="dugme2"
+                                            disabled={evidencija[u.korisnik.id] === "PRISUTAN"}
+                                            style={{
+                                                opacity: evidencija[u.korisnik.id] === "PRISUTAN" ? 0.45 : 1,
+                                                cursor: evidencija[u.korisnik.id] === "PRISUTAN" ? "not-allowed" : "pointer"
+                                            }}>
+                                            Prisutan
+                                        </button>
 
-                {/*Padajuca lista sastanaka*/}
-                <select value={sastanakId}
-                    onChange={(e) => {
-                        setSastanakId(e.target.value);
-                        ucitajUcesnike(e.target.value);
-                    }}
-                    className="polje"
-                >
-                    <option value="">--Izaberi sastanak--</option>
-                    {sastanci.map((s) => (
-                        <option key={s.id} value={s.id}>{s.tema}</option>
-                    ))}
-                </select>
-
-                {/*Spisak ucesnika sastanka sa dugmicima */}
-                <h3 className="podnaslov">Učesnici</h3>
-                {ucesnici.length == 0 ? (
-                    <p className="tekst">Izaberi sastanak da vidiš učesnike</p>
-                ) : (
-                    ucesnici.map((u) => (
-                        <div key={u.id}
-                            style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                marginBottom: "10px",
-                                padding: "8px",
-                                backgroundColor: "#faf7f3",
-                                borderRadius: "6px"
-                            }}>
-                            <span style={{ color: "#54463d" }}>
-                                {u.korisnik.ime} {u.korisnik.prezime}
-                            </span>
-                            <div style={{ display: "flex", gap: "6px" }}>
-                                <button onClick={() => evidentiraj(u.korisnik.id, "PRISUTAN")}
-                                    className="dugme2">
-                                    Prisutan
-                                </button>
-                                <button onClick={() => evidentiraj(u.korisnik.id, "ODSUTAN")}
-                                    className="dugme2">
-                                    Odsutan
-                                </button>
-                            </div>
-                        </div>
-                    ))
+                                        <button
+                                            onClick={() => evidentiraj(u.korisnik.id, "ODSUTAN")}
+                                            className="dugme2"
+                                            disabled={evidencija[u.korisnik.id] === "ODSUTAN"}
+                                            style={{
+                                                opacity: evidencija[u.korisnik.id] === "ODSUTAN" ? 0.45 : 1,
+                                                cursor: evidencija[u.korisnik.id] === "ODSUTAN" ? "not-allowed" : "pointer"
+                                            }}>
+                                            Odsutan
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+                <div className="korisnici-dugmad">
+                    <button
+                        onClick={() => navigate("/dashboard")}
+                        className="dugme2">
+                        Nazad
+                    </button>
+                </div>
+                {poruka && (
+                    <p className="tekst">
+                        {poruka}
+                    </p>
                 )}
-                {poruka && <p
-                    className="tekst"
-                    style={{ textAlign: "center" }}>
-                    {poruka}
-                </p>}
-
-                <button onClick={() => navigate("/dashboard")} className="dugme">Nazad</button>
             </div>
         </div>
-    )
+    );
 }
 export default Prisustvo;
