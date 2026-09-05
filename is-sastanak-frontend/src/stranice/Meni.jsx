@@ -58,7 +58,7 @@ function Meni() {
 
                 {/*Vracanje na pocetnu stranu */}
                 <div className="meni-stavka"
-                onClick={()=> idiNa("/dashboard")}>
+                    onClick={() => idiNa("/dashboard")}>
                     Početna strana
                 </div>
                 {/* Upravljanje korisnicima */}
@@ -112,8 +112,11 @@ function Meni() {
                         Moji zaposleni
                     </div>
                 }
-
-
+                {/* Moje ucesce */}
+                <div className = "meni-stavka"
+                onClick={() => navigate("/moje-ucesce")}>
+                   Moja učešća
+                </div>
                 {/* Zakazivanje sastanka */}
                 {(jeAdmin || jeRukovodilac) &&
                     <div

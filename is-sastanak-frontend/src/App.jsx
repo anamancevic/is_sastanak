@@ -13,6 +13,7 @@ import Obavestenja from "./stranice/Obavestenja";
 import ZasticenaRuta from "./ZasticenaRuta";
 import Kalendar from "./stranice/Kalendar";
 import MojiZaposleni from "./stranice/MojiZaposleni";
+import MojeUcesce from "./stranice/MojeUcesce";
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
             <MojiZaposleni />
           </ZasticenaRuta>
         } />
+        <Route path="/moje-ucesce" element={<MojeUcesce />} />
       </Routes>
     </BrowserRouter>
   );

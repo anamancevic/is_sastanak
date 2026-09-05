@@ -270,7 +270,16 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
         Korisnik prijavljeni = korisnikRepository.findByKorisnickoIme(korisnickoIme)
                 .orElseThrow(()-> new RuntimeException("Korisnik ne postoji!"));
 
-        List<Sastanak> moji = sastanakRepository.findSastanciKorisnika(prijavljeni.getId());
+        List<String> uloge = korisnikUlogaRepository.findByKorisnikId(prijavljeni.getId())
+                .stream().map(ku-> ku.getUloga().getNaziv()).toList();
+        boolean jeAdmin = uloge.contains("administrator");
+
+        List<Sastanak> moji;
+        if (jeAdmin){
+            moji = sastanakRepository.findAll();
+        } else {
+            moji = sastanakRepository.findSastanciKorisnika(prijavljeni.getId());
+        }
 
         java.time.LocalDate danas = java.time.LocalDate.now();
         java.time.LocalDateTime odDatuma;
