@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Meni from "./Meni";
-import jsPDF from "jspdf";
-
+import jsPDF from "jspdf";//PDF
+import * as XLSX from "xlsx";//Exsel
+import { Document, Packer, Paragraph, TextRun, HeadingLevel } from "docx";//Word
 
 function MojeUcesce() {
     const navigate = useNavigate();
@@ -78,6 +79,78 @@ function MojeUcesce() {
             }
         });
         doc.save("moje-ucesce.pdf");
+    }
+
+    function izveziExcel() {
+        // priprema podataka kao redove
+        const redovi = sastanci.map((s) => ({
+            Tema: s.tema,
+            Datum: new Date(s.datumOdrzavanja).toLocaleDateString("sr-RS"),
+            Tacke: s.tacke && s.tacke.some((t) => t.sadrzaj && t.sadrzaj.trim() !== "")
+                ? s.tacke.map((t) => t.redniBroj + ". " + t.sadrzaj).join("; ")
+                : "Nema tacaka"
+        }));
+
+        // napravi radni list i knjigu
+        const list = XLSX.utils.json_to_sheet(redovi);
+        const knjiga = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(knjiga, list, "Moje ucesce");
+
+        // skini fajl
+        XLSX.writeFile(knjiga, "moje-ucesce.xlsx");
+    }
+
+    async function izveziWord() {
+        // napravi paragrafe za svaki sastanak
+        const paragrafi = [];
+
+        // naslov
+        paragrafi.push(new Paragraph({
+            text: "Izvestaj o ucescu na sastancima",
+            heading: HeadingLevel.HEADING_1
+        }));
+        paragrafi.push(new Paragraph({
+            text: "Period: " + (period === "mesec" ? "Ovaj mesec" : "Ova godina")
+        }));
+        paragrafi.push(new Paragraph({ text: "" }));  // prazan red
+
+        // sastanci
+        sastanci.forEach((s) => {
+            paragrafi.push(new Paragraph({
+                text: s.tema,
+                heading: HeadingLevel.HEADING_2
+            }));
+            paragrafi.push(new Paragraph({
+                text: "Datum: " + new Date(s.datumOdrzavanja).toLocaleDateString("sr-RS")
+            }));
+            paragrafi.push(new Paragraph({
+                children: [new TextRun({ text: "Tacke dnevnog reda:", bold: true })]
+            }));
+
+            if (s.tacke && s.tacke.length > 0) {
+                s.tacke.forEach((t) => {
+                    paragrafi.push(new Paragraph({ text: t.redniBroj + ". " + t.sadrzaj }));
+                });
+            } else {
+                paragrafi.push(new Paragraph({ text: "Nema tacaka" }));
+            }
+
+            paragrafi.push(new Paragraph({ text: "" }));  // razmak
+        });
+
+        // napravi dokument
+        const doc = new Document({
+            sections: [{ children: paragrafi }]
+        });
+
+        // sačuvaj
+        const blob = await Packer.toBlob(doc);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "moje-ucesce.docx";
+        a.click();
+        URL.revokeObjectURL(url);
     }
 
     return (
@@ -221,6 +294,18 @@ function MojeUcesce() {
                             className="dugme"
                         >
                             Izvezi u PDF
+                        </button>
+                        <button
+                            onClick={izveziExcel}
+                            className="dugme"
+                        >
+                            Izvezi u Exsel
+                        </button>
+                         <button
+                            onClick={izveziWord}
+                            className="dugme"
+                        >
+                            Izvezi u Word
                         </button>
                         <button
                             onClick={() => navigate("/dashboard")}
