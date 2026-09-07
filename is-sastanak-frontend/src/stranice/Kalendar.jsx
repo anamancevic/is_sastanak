@@ -79,17 +79,47 @@ function Kalendar() {
         return datumSastanka.toDateString() === izabraniDatum.toDateString();
     });
 
+
+    function titleContent({ date, view }) {
+        //samo za mesecni prikaz
+        if (view != "month") {
+            return null;
+        }
+        const sastanciTogDana = sastanci.filter((s) => {
+            const datumSastanka = new Date(s.datumOdrzavanja);
+            return datumSastanka.toDateString() === date.toDateString();
+        });
+        if (sastanciTogDana.length === 0) {
+            return null;
+        }
+        //da li ima stalnih ili vanrednih
+        const imaStalni = sastanciTogDana.some((s) => s.tip === "STALNI");
+        const imaVanredni = sastanciTogDana.some((s) => s.tip === "VANREDNI");
+
+        return (
+            <div style={{ display: "flex", justifyContent: "center", gap: "2px", marginTop: "2px" }}>
+                {imaStalni && (
+                    <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#7a8b6f", display: "inline-block" }}></span>
+                )}
+                {imaVanredni && (
+                    <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#b5651d", display: "inline-block" }}></span>
+                )}
+            </div>
+        );
+    }
+
     return (
         <div className="pozadina">
             <Meni />
             <div className="korisnici-sadrzaj">
                 <div className="korisnici-forma">
                     <div>
-                         <h2 className="naslov" style={{textAlign: "left"}}>Kalendar sastanaka</h2>
+                        <h2 className="naslov" style={{ textAlign: "left" }}>Kalendar sastanaka</h2>
                         <h3 className="podnaslov">Izaberite datum</h3>
                         <Calendar
                             onChange={setIzabraniDatum}
                             value={izabraniDatum}
+                            tileContent={titleContent}
                             style={{ width: "100%", maxWidth: "none" }}
                         />
                     </div>
