@@ -10,12 +10,14 @@ import com.sastanak.is_sastanak.users.model.OrganizacionaCelina;
 import com.sastanak.is_sastanak.users.repository.KorisnikRepository;
 import com.sastanak.is_sastanak.users.repository.KorisnikUlogaRepository;
 import com.sastanak.is_sastanak.users.repository.OrganizacionaCelinaRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.beans.JavaBean;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +54,20 @@ public class SastanakService {
         this.korisnikUlogaRepository = korisnikUlogaRepository;
     }
 
+    @Transactional
     public Sastanak zakaziSastanak(ZakazivanjeZahtev zahtev) {
+        //provera tipa sastanka
+        if (zahtev.getTip()==null){
+            throw new RuntimeException("Sastanak mora imati tip!");
+        }
+        if (zahtev.getTip() == TipSastanka.STALNI
+        && zahtev.getUcestalost()==null){
+                throw new RuntimeException("Ucestalost mora postojati za stalni sastanak!");
+        }
+        if (zahtev.getTip()==TipSastanka.VANREDNI){
+            zahtev.setUcestalost(null);
+        }
+
         KategorijaSastanka kategorija = kategorijaSastankaRepository.findById(zahtev.getKategorijaId())
                 .orElseThrow(() -> new RuntimeException("Kategorija ne postoji!"));
 
@@ -62,35 +77,105 @@ public class SastanakService {
         OrganizacionaCelina celina = organizacionaCelinaRepository.findById(zahtev.getOrganizacionaCelinaId())
                 .orElseThrow(() -> new RuntimeException("Organizaciona celina ne postoji!"));
 
-        Sastanak sastanak = new Sastanak();
-        sastanak.setTema(zahtev.getTema());
-        sastanak.setDatumOdrzavanja(zahtev.getDatumOdrzavanja());
-        sastanak.setProstorija(zahtev.getProstorija());
-        sastanak.setTip(zahtev.getTip());
-        sastanak.setStatus(StatusSastanka.ZAKAZAN);
-        sastanak.setKategorija(kategorija);
-        sastanak.setRukovodilac(rukovodilac);
-        sastanak.setOrganizacionaCelina(celina);
-
-        if (zahtev.getZapisnicarId() != null) {
-            Korisnik zapisnicar = korisnikRepository.findById(zahtev.getZapisnicarId())
-                    .orElseThrow(() -> new RuntimeException("Zapisnicar ne postoji!"));
-            sastanak.setZapisnicar(zapisnicar);
+        if (zahtev.getZapisnicarId() == null) {
+            throw new RuntimeException("Zapisničar je obavezan!");
         }
-        Sastanak sacuvaniSastanak = sastanakRepository.save(sastanak);
 
-        if (zahtev.getTacke() != null){
-            for (TackaZahtev t : zahtev.getTacke()){
-                TackaDnevnogReda tacka = new TackaDnevnogReda();
-                tacka.setRedniBroj(t.getRedniBroj());
-                tacka.setSadrzaj(t.getSadrzaj());
-                tacka.setSastanak(sacuvaniSastanak);
-                tackaDnevnogRedaRepository.save(tacka);
+        Korisnik zapisnicar = korisnikRepository.findById(zahtev.getZapisnicarId())
+                .orElseThrow(() -> new RuntimeException("Zapisnicar ne postoji!"));
+        //vanredni sastanak - pravi se samo jedan
+        if (zahtev.getTip()==TipSastanka.VANREDNI){
+            return napraviJedanSastanak(
+                    zahtev,
+                    zahtev.getDatumOdrzavanja(),
+                    kategorija,
+                    rukovodilac,
+                    celina,
+                    zapisnicar
+            );
+        }
 
+        //stalni sastanak - generisanje do kraja godine
+        LocalDateTime datum = zahtev.getDatumOdrzavanja();
+
+        LocalDateTime krajGodine = LocalDateTime.of(
+                datum.getYear(),
+                12,
+                31,
+                23,
+                59,
+                59
+        );
+
+        Sastanak prviSastanak = null;
+
+        while (!datum.isAfter(krajGodine)){
+            Sastanak sacuvani = napraviJedanSastanak(
+                    zahtev,
+                    datum,
+                    kategorija,
+                    rukovodilac,
+                    celina,
+                    zapisnicar
+            );
+            if (prviSastanak == null){
+                prviSastanak = sacuvani;
             }
+            datum = izracunajSledeciDatum(
+                    datum,
+                    zahtev.getUcestalost()
+            );
         }
-        return sacuvaniSastanak;
+        return prviSastanak;
     }
+
+    private LocalDateTime izracunajSledeciDatum(LocalDateTime datum, Ucestalost ucestalost) {
+    return switch (ucestalost){
+        case DNEVNI -> datum.plusDays(1);
+        case NEDELJNI -> datum.plusWeeks(1);
+        case MESECNI -> datum.plusMonths(1);
+        case TROMESECNI -> datum.plusMonths(3);
+        case SESTOMESECNI -> datum.plusMonths(6);
+        case GODISNJI -> datum.plusYears(1);
+    };
+    }
+
+    private Sastanak napraviJedanSastanak(ZakazivanjeZahtev zahtev, LocalDateTime datumOdrzavanja, KategorijaSastanka kategorija, Korisnik rukovodilac, OrganizacionaCelina celina, Korisnik zapisnicar) {
+    Sastanak sastanak = new Sastanak();
+
+    sastanak.setTema(zahtev.getTema());
+    sastanak.setDatumOdrzavanja(datumOdrzavanja);
+    sastanak.setProstorija(zahtev.getProstorija());
+    sastanak.setTip(zahtev.getTip());
+    sastanak.setStatus(StatusSastanka.ZAKAZAN);
+    sastanak.setKategorija(kategorija);
+    sastanak.setRukovodilac(rukovodilac);
+    sastanak.setOrganizacionaCelina(celina);
+    sastanak.setZapisnicar(zapisnicar);
+
+    if (zahtev.getTip() == TipSastanka.STALNI){
+        sastanak.setUcestalost(zahtev.getUcestalost());
+    }else {
+        sastanak.setUcestalost(null);
+    }
+
+    Sastanak sacuvaniSastanak = sastanakRepository.save(sastanak);
+
+    if (zahtev.getTacke()!= null){
+        for (TackaZahtev t : zahtev.getTacke()) {
+            TackaDnevnogReda tacka =
+                    new TackaDnevnogReda();
+
+            tacka.setRedniBroj(t.getRedniBroj());
+            tacka.setSadrzaj(t.getSadrzaj());
+            tacka.setSastanak(sacuvaniSastanak);
+
+            tackaDnevnogRedaRepository.save(tacka);
+        }
+    }
+    return sacuvaniSastanak;
+    }
+
     public List<Sastanak> getSviSastanci(){
         return sastanakRepository.findAll();
     }

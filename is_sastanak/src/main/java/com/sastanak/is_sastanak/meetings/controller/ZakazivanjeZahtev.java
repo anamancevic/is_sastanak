@@ -1,4 +1,5 @@
 package com.sastanak.is_sastanak.meetings.controller;
+import com.sastanak.is_sastanak.meetings.model.Ucestalost;
 
 import com.sastanak.is_sastanak.meetings.model.TipSastanka;
 import lombok.Getter;
@@ -14,6 +15,7 @@ public class ZakazivanjeZahtev {
     private LocalDateTime datumOdrzavanja;
     private String prostorija;
     private TipSastanka tip;
+    private Ucestalost ucestalost;
     private Integer kategorijaId;
     private Integer rukovodilacId;
     private Integer zapisnicarId;
