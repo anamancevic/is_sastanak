@@ -16,6 +16,7 @@ function ZakazivanjeSastanka() {
     const [kategorijaId, setKategorijaId] = useState("");
     const [rukovodilacId, setRukovodilacId] = useState("");
     const [organizacionaCelinaId, setOrganizacionaCelinaId] = useState("");
+    const [ucestalost, setUcestalost] = useState("");
 
     const [zapisnicarId, setZapisnicarId] = useState("");
     const [zapisnicari, setZapisnicari] = useState([]);
@@ -74,6 +75,7 @@ function ZakazivanjeSastanka() {
         if (organizacionaCelinaId === "") return "Morate izabrati organizacionu celinu.";
         if (zapisnicarId === "") return "Morate izabrati zapisničara sastanka.";
         if (tacke.length === 0) return "Morate dodati bar jednu tačku dnevnog reda.";
+        if(tip==="STALAN" && ucestalost === "") return "Morate uneti ucestalost za stalne sastanke!";
         return "";
     }
 
@@ -102,7 +104,8 @@ function ZakazivanjeSastanka() {
                     rukovodilacId: korisnik.id,
                     organizacionaCelinaId: organizacionaCelinaId,
                     zapisnicarId: zapisnicarId,
-                    tacke: tacke
+                    tacke: tacke,
+                    ucestalost: tip=== "STALNI" ? ucestalost : null
                 }),
             });
 
@@ -140,22 +143,85 @@ function ZakazivanjeSastanka() {
                             placeholder="Tema sastanka"
                             value={tema}
                             onChange={(e) => setTema(e.target.value)}
-                            className="polje"/>
+                            className="polje" />
                         <input
                             type="datetime-local"
                             value={datumOdrzavanja}
                             onChange={(e) => setDatumOdrzavanja(e.target.value)}
-                            className="polje"/>
+                            className="polje" />
                         <input
                             type="text"
                             placeholder="Prostorija"
                             value={prostorija}
                             onChange={(e) => setProstorija(e.target.value)}
-                            className="polje"/>
-                        <select value={tip} onChange={(e) => setTip(e.target.value)} className="polje">
-                            <option value="VANREDNI">Vanredni</option>
-                            <option value="STALNI">Stalni</option>
-                        </select>
+                            className="polje" />
+                        <div
+                            className="korisnici-forma"
+                            style={{
+                                gridTemplateColumns: tip === "STALNI" ? "1fr 1fr" : "1fr",
+                                alignItems: "flex-start",
+                                marginBottom: "20px"
+                            }}>
+                            <select
+                                value={tip}
+                                onChange={(e) => {
+                                    setTip(e.target.value);
+
+                                    if (e.target.value === "VANREDNI") {
+                                        setUcestalost("");
+                                    }
+                                }}
+                                className="polje">
+                                <option value="VANREDNI">
+                                    Vanredni sastanak
+                                </option>
+                                <option value="STALNI">
+                                    Stalni sastanak
+                                </option>
+                            </select>
+                            {tip === "STALNI" && (
+                                <div>
+                                    <p
+                                        className="tekst"
+                                        style={{
+                                            fontWeight: "bold",
+                                            marginBottom: "10px"
+                                        }}>
+                                        Izaberite učestalost:
+                                    </p>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            flexWrap: "wrap",
+                                            gap: "12px 20px"
+                                        }}>
+                                        {[
+                                            ["DNEVNI", "Dnevni"],
+                                            ["NEDELJNI", "Nedeljni"],
+                                            ["MESECNI", "Mesečni"],
+                                            ["TROMESECNI", "Tromesečni"],
+                                            ["SESTOMESECNI", "Šestomesečni"],
+                                            ["GODISNJI", "Godišnji"]
+                                        ].map(([vrednost, naziv]) => (
+                                            <label
+                                                key={vrednost}
+                                                style={{
+                                                    color: "#5f576c",
+                                                    cursor: "pointer"
+                                                }}>
+                                                <input
+                                                    type="radio"
+                                                    name="ucestalost"
+                                                    value={vrednost}
+                                                    checked={ucestalost === vrednost}
+                                                    onChange={() => setUcestalost(vrednost)} />
+                                                {" "}{naziv}
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         <select
                             value={kategorijaId}
                             onChange={(e) => setKategorijaId(e.target.value)}
@@ -209,7 +275,7 @@ function ZakazivanjeSastanka() {
                                     value={t.sadrzaj}
                                     onChange={(e) => izmeniTacku(index, e.target.value)}
                                     className="polje"
-                                    style={{ flex: 1, marginBottom: "0" }}/>
+                                    style={{ flex: 1, marginBottom: "0" }} />
                                 <button
                                     onClick={() => obrisiTacku(index)}
                                     className="dugme2"
