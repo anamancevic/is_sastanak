@@ -119,7 +119,7 @@ function Prisustvo() {
                             </option>
                             {sastanci.map((s) => (
                                 <option key={s.id} value={s.id}>
-                                    {s.tema}
+                                    {s.tema} ({new Date(s.datumOdrzavanja).toLocaleDateString("sr-RS")})
                                 </option>
                             ))}
                         </select>

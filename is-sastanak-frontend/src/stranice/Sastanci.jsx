@@ -44,7 +44,7 @@ function SastanakKartica({ sastanak }) {
     return (
         <div className="tacka-kartica">
             <h3 className="podnaslov">
-                {sastanak.tema}
+                {sastanak.tema} ({new Date(sastanak.datumOdrzavanja).toLocaleDateString("sr-RS")})
             </h3>
             {sastanak.rukovodilac && sastanak.rukovodilac.organizacionaCelina && (
                 <p style={{ color: "#8e7cab", fontSize: "13px", fontStyle: "italic" }}>

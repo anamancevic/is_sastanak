@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.beans.JavaBean;
@@ -267,7 +268,7 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
     }
 
     public Page<Sastanak> getSastanakStranica (int strana, int velicina){
-        Pageable pageable = PageRequest.of(strana, velicina);
+        Pageable pageable = PageRequest.of(strana, velicina, Sort.by("datumOdrzavanja"));
         return sastanakRepository.findAll(pageable);
     }
     public List<Sastanak> getSastanciMojihZaposlenih(String korisnickoIme){

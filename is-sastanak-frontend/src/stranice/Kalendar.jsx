@@ -30,8 +30,16 @@ function SastanakUKalendaru({ sastanak }) {
 
     return (
         <div className="tacka-kartica">
-            <p className="tekst"
-                style={{ fontWeight: "bold" }}>{sastanak.tema}</p>
+            <p className="tekst" style={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{
+                    width: "10px",
+                    height: "10px",
+                    borderRadius: "50%",
+                    backgroundColor: sastanak.tip === "STALNI" ? "#7a8b6f" : "#b5651d",
+                    display: "inline-block"
+                }}></span>
+                {sastanak.tema}
+            </p>
             <p style={{ color: "#54463d" }}>
                 Status: {sastanak.status} | Tip: {sastanak.tip}
             </p>
@@ -64,8 +72,11 @@ function Kalendar() {
 
     useEffect(() => {
         async function ucitaj() {
+              const korisnik = JSON.parse(localStorage.getItem("korisnik"));
             try {
-                const odgovor = await fetch("http://localhost:8080/api/sastanci");
+                const odgovor = await fetch("http://localhost:8080/api/sastanci/moji", {
+                     headers: { "X-Korisnik": korisnik.korisnickoIme}
+                    });
                 setSastanci(await odgovor.json());
             } catch (greska) {
                 console.log("Greska pri ucitavanju sastanaka!");
