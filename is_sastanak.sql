@@ -1,6 +1,6 @@
 /*
 SQLyog Community v13.3.0 (64 bit)
-MySQL - 10.4.32-MariaDB : Database - is_sastanak
+MySQL - 8.4.11 : Database - is_sastanak
 *********************************************************************
 */
 
@@ -12,7 +12,7 @@ MySQL - 10.4.32-MariaDB : Database - is_sastanak
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`is_sastanak` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`is_sastanak` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 
 USE `is_sastanak`;
 
@@ -21,8 +21,8 @@ USE `is_sastanak`;
 DROP TABLE IF EXISTS `kategorija_sastanka`;
 
 CREATE TABLE `kategorija_sastanka` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `naziv` varchar(80) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `naziv` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `naziv` (`naziv`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -43,18 +43,18 @@ insert  into `kategorija_sastanka`(`id`,`naziv`) values
 DROP TABLE IF EXISTS `korisnik`;
 
 CREATE TABLE `korisnik` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `organizaciona_celina_id` int(11) NOT NULL,
-  `ime` varchar(100) NOT NULL,
-  `ime_oca` varchar(100) DEFAULT NULL,
-  `prezime` varchar(100) NOT NULL,
-  `jmbg` varchar(13) NOT NULL,
-  `radno_mesto` varchar(150) DEFAULT NULL,
-  `kontakt_telefon_posao` varchar(30) DEFAULT NULL,
-  `mobilni_telefon` varchar(30) DEFAULT NULL,
-  `mejl` varchar(150) DEFAULT NULL,
-  `korisnicko_ime` varchar(50) NOT NULL,
-  `lozinka_hash` varchar(255) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `organizaciona_celina_id` int NOT NULL,
+  `ime` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ime_oca` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `prezime` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `jmbg` varchar(13) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `radno_mesto` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `kontakt_telefon_posao` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mobilni_telefon` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mejl` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `korisnicko_ime` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lozinka_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `jmbg` (`jmbg`),
   UNIQUE KEY `korisnicko_ime` (`korisnicko_ime`),
@@ -88,12 +88,12 @@ insert  into `korisnik`(`id`,`organizaciona_celina_id`,`ime`,`ime_oca`,`prezime`
 DROP TABLE IF EXISTS `korisnik_uloga`;
 
 CREATE TABLE `korisnik_uloga` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `korisnik_id` int(11) NOT NULL,
-  `uloga_id` int(11) NOT NULL,
-  `organizaciona_celina_id` int(11) NOT NULL,
-  `tip` enum('STALNA','PRIVREMENA') NOT NULL,
-  `napomena` varchar(255) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `korisnik_id` int NOT NULL,
+  `uloga_id` int NOT NULL,
+  `organizaciona_celina_id` int NOT NULL,
+  `tip` enum('STALNA','PRIVREMENA') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `napomena` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `korisnik_id` (`korisnik_id`,`uloga_id`,`organizaciona_celina_id`),
   KEY `uloga_id` (`uloga_id`),
@@ -129,18 +129,18 @@ insert  into `korisnik_uloga`(`id`,`korisnik_id`,`uloga_id`,`organizaciona_celin
 DROP TABLE IF EXISTS `obavestenje`;
 
 CREATE TABLE `obavestenje` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `korisnik_id` int(11) NOT NULL,
-  `izazvao_korisnik_id` int(11) DEFAULT NULL,
-  `sadrzaj` varchar(500) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `korisnik_id` int NOT NULL,
+  `izazvao_korisnik_id` int DEFAULT NULL,
+  `sadrzaj` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
   `datum_vreme` datetime NOT NULL,
-  `procitano` tinyint(1) NOT NULL DEFAULT 0,
+  `procitano` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `korisnik_id` (`korisnik_id`),
   KEY `izazvao_korisnik_id` (`izazvao_korisnik_id`),
   CONSTRAINT `obavestenje_ibfk_1` FOREIGN KEY (`korisnik_id`) REFERENCES `korisnik` (`id`),
   CONSTRAINT `obavestenje_ibfk_2` FOREIGN KEY (`izazvao_korisnik_id`) REFERENCES `korisnik` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `obavestenje` */
 
@@ -149,7 +149,7 @@ insert  into `obavestenje`(`id`,`korisnik_id`,`izazvao_korisnik_id`,`sadrzaj`,`d
 (10,18,NULL,'Dodeljena Vam je uloga u sistemu!','2026-09-07 23:14:17',0),
 (11,21,NULL,'Dodeljena Vam je uloga u sistemu!','2026-09-07 23:14:42',0),
 (12,28,NULL,'Dodeljena Vam je uloga u sistemu!','2026-09-07 23:15:51',0),
-(13,14,NULL,'Dodeljena Vam je uloga u sistemu!','2026-09-07 23:16:27',0),
+(13,14,NULL,'Dodeljena Vam je uloga u sistemu!','2026-09-07 23:16:27',1),
 (14,19,NULL,'Dodeljena Vam je uloga u sistemu!','2026-09-07 23:16:47',0),
 (15,23,NULL,'Dodeljena Vam je uloga u sistemu!','2026-09-07 23:17:27',0),
 (16,25,NULL,'Dodeljena Vam je uloga u sistemu!','2026-09-07 23:17:52',0),
@@ -205,15 +205,33 @@ insert  into `obavestenje`(`id`,`korisnik_id`,`izazvao_korisnik_id`,`sadrzaj`,`d
 (66,22,NULL,'Dodati ste kao ucesnik na sastanak: Hitna nabavka opreme','2026-09-08 17:00:41',0),
 (67,14,NULL,'Dodati ste kao ucesnik na sastanak: Test sastanak','2026-09-08 18:24:27',0),
 (68,15,NULL,'Dodati ste kao ucesnik na sastanak: Test sastanak','2026-09-08 18:24:29',0),
-(69,22,NULL,'Dodati ste kao ucesnik na sastanak: Test sastanak','2026-09-08 18:24:33',0);
+(69,22,NULL,'Dodati ste kao ucesnik na sastanak: Test sastanak','2026-09-08 18:24:33',0),
+(70,14,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:36:34',0),
+(71,15,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:36:40',0),
+(72,17,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:36:49',0),
+(73,14,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:37:07',0),
+(74,15,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:37:10',0),
+(75,17,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:37:13',0),
+(76,14,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:37:22',0),
+(77,15,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:37:24',0),
+(78,17,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:37:27',0),
+(79,14,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:37:36',0),
+(80,15,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:37:39',0),
+(81,17,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:37:43',0),
+(82,14,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:37:55',0),
+(83,15,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:37:58',0),
+(84,17,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:38:02',0),
+(85,14,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:38:15',0),
+(86,15,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:38:19',0),
+(87,17,NULL,'Dodati ste kao ucesnik na sastanak: Nedeljni sastanak sektora za razvoj','2026-09-08 18:38:22',0);
 
 /*Table structure for table `organizaciona_celina` */
 
 DROP TABLE IF EXISTS `organizaciona_celina`;
 
 CREATE TABLE `organizaciona_celina` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `naziv` varchar(150) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `naziv` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -231,12 +249,12 @@ insert  into `organizaciona_celina`(`id`,`naziv`) values
 DROP TABLE IF EXISTS `predlog`;
 
 CREATE TABLE `predlog` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `sastanak_id` int(11) NOT NULL,
-  `tacka_id` int(11) NOT NULL,
-  `korisnik_id` int(11) DEFAULT NULL,
-  `spoljni_ucesnik_id` int(11) DEFAULT NULL,
-  `tekst` text NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sastanak_id` int NOT NULL,
+  `tacka_id` int NOT NULL,
+  `korisnik_id` int DEFAULT NULL,
+  `spoljni_ucesnik_id` int DEFAULT NULL,
+  `tekst` text COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `sastanak_id` (`sastanak_id`),
   KEY `tacka_id` (`tacka_id`),
@@ -255,13 +273,13 @@ CREATE TABLE `predlog` (
 DROP TABLE IF EXISTS `prisustvo`;
 
 CREATE TABLE `prisustvo` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `sastanak_id` int(11) NOT NULL,
-  `korisnik_id` int(11) DEFAULT NULL,
-  `spoljni_ucesnik_id` int(11) DEFAULT NULL,
-  `status` enum('PRISUTAN','ODSUTAN') NOT NULL,
-  `planiran` tinyint(1) NOT NULL DEFAULT 1,
-  `zamena_za_korisnik_id` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sastanak_id` int NOT NULL,
+  `korisnik_id` int DEFAULT NULL,
+  `spoljni_ucesnik_id` int DEFAULT NULL,
+  `status` enum('PRISUTAN','ODSUTAN') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `planiran` tinyint(1) NOT NULL DEFAULT '1',
+  `zamena_za_korisnik_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sastanak_id` (`sastanak_id`),
   KEY `korisnik_id` (`korisnik_id`),
@@ -271,7 +289,7 @@ CREATE TABLE `prisustvo` (
   CONSTRAINT `prisustvo_ibfk_2` FOREIGN KEY (`korisnik_id`) REFERENCES `korisnik` (`id`),
   CONSTRAINT `prisustvo_ibfk_3` FOREIGN KEY (`spoljni_ucesnik_id`) REFERENCES `spoljni_ucesnik` (`id`),
   CONSTRAINT `prisustvo_ibfk_4` FOREIGN KEY (`zamena_za_korisnik_id`) REFERENCES `korisnik` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `prisustvo` */
 
@@ -318,30 +336,48 @@ insert  into `prisustvo`(`id`,`sastanak_id`,`korisnik_id`,`spoljni_ucesnik_id`,`
 (46,156,22,NULL,'PRISUTAN',1,NULL),
 (47,157,14,NULL,'PRISUTAN',1,NULL),
 (48,157,15,NULL,'PRISUTAN',1,NULL),
-(49,157,22,NULL,'PRISUTAN',1,NULL);
+(49,157,22,NULL,'PRISUTAN',1,NULL),
+(50,158,14,NULL,'PRISUTAN',1,NULL),
+(51,158,15,NULL,'PRISUTAN',1,NULL),
+(52,158,17,NULL,'PRISUTAN',1,NULL),
+(53,159,14,NULL,'PRISUTAN',1,NULL),
+(54,159,15,NULL,'PRISUTAN',1,NULL),
+(55,159,17,NULL,'ODSUTAN',1,NULL),
+(56,160,14,NULL,'PRISUTAN',1,NULL),
+(57,160,15,NULL,'PRISUTAN',1,NULL),
+(58,160,17,NULL,'PRISUTAN',1,NULL),
+(59,161,14,NULL,'PRISUTAN',1,NULL),
+(60,161,15,NULL,'ODSUTAN',1,NULL),
+(61,161,17,NULL,'PRISUTAN',1,NULL),
+(62,162,14,NULL,'PRISUTAN',1,NULL),
+(63,162,15,NULL,'PRISUTAN',1,NULL),
+(64,162,17,NULL,'PRISUTAN',1,NULL),
+(65,171,14,NULL,'ODSUTAN',1,NULL),
+(66,171,15,NULL,'PRISUTAN',1,NULL),
+(67,171,17,NULL,'PRISUTAN',1,NULL);
 
 /*Table structure for table `sastanak` */
 
 DROP TABLE IF EXISTS `sastanak`;
 
 CREATE TABLE `sastanak` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tema` varchar(200) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tema` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `datum_odrzavanja` datetime NOT NULL,
-  `kategorija_id` int(11) NOT NULL,
-  `rukovodilac_id` int(11) NOT NULL,
-  `zapisnicar_id` int(11) DEFAULT NULL,
-  `organizaciona_celina_id` int(11) NOT NULL,
-  `prostorija` varchar(100) DEFAULT NULL,
-  `tip` enum('STALNI','VANREDNI') NOT NULL,
-  `status` enum('ZAKAZAN','ODRZAN','ODLOZEN','NEODRZAN') NOT NULL DEFAULT 'ZAKAZAN',
-  `obrazlozenje` varchar(500) DEFAULT NULL,
-  `zakljucak` text DEFAULT NULL,
-  `akt_delovodni_broj` varchar(50) DEFAULT NULL,
+  `kategorija_id` int NOT NULL,
+  `rukovodilac_id` int NOT NULL,
+  `zapisnicar_id` int DEFAULT NULL,
+  `organizaciona_celina_id` int NOT NULL,
+  `prostorija` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tip` enum('STALNI','VANREDNI') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('ZAKAZAN','ODRZAN','ODLOZEN','NEODRZAN') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ZAKAZAN',
+  `obrazlozenje` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `zakljucak` text COLLATE utf8mb4_unicode_ci,
+  `akt_delovodni_broj` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `akt_datum` date DEFAULT NULL,
-  `akt_organizacija` varchar(150) DEFAULT NULL,
-  `ucestalost` enum('DNEVNI','NEDELJNI','MESECNI','TROMESECNI','SESTOMESECNI','GODISNJI') DEFAULT NULL,
-  `dan_odrzavanja` varchar(50) DEFAULT NULL,
+  `akt_organizacija` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ucestalost` enum('DNEVNI','NEDELJNI','MESECNI','TROMESECNI','SESTOMESECNI','GODISNJI') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dan_odrzavanja` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `kategorija_id` (`kategorija_id`),
   KEY `rukovodilac_id` (`rukovodilac_id`),
@@ -351,7 +387,7 @@ CREATE TABLE `sastanak` (
   CONSTRAINT `sastanak_ibfk_2` FOREIGN KEY (`rukovodilac_id`) REFERENCES `korisnik` (`id`),
   CONSTRAINT `sastanak_ibfk_3` FOREIGN KEY (`zapisnicar_id`) REFERENCES `korisnik` (`id`),
   CONSTRAINT `sastanak_ibfk_4` FOREIGN KEY (`organizaciona_celina_id`) REFERENCES `organizaciona_celina` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=158 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=193 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `sastanak` */
 
@@ -484,18 +520,53 @@ insert  into `sastanak`(`id`,`tema`,`datum_odrzavanja`,`kategorija_id`,`rukovodi
 (154,'Hitan sastanak o kritičnom bagu','2026-10-01 10:00:00',4,1,14,1,'Sala 2','VANREDNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (155,'Vanredna pravna konsultacija','2026-10-14 11:00:00',3,1,19,2,'Sala 6','VANREDNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,NULL,NULL),
 (156,'Hitna nabavka opreme','2026-10-05 12:00:00',4,1,27,1,'Sala 2','VANREDNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,NULL,NULL),
-(157,'Test sastanak','2026-09-01 18:00:00',6,13,14,1,'Sala 1','VANREDNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+(157,'Test sastanak','2026-09-01 18:00:00',6,13,14,1,'Sala 1','VANREDNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(158,'Nedeljni sastanak sektora za razvoj','2026-05-01 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(159,'Nedeljni sastanak sektora za razvoj','2026-05-08 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(160,'Nedeljni sastanak sektora za razvoj','2026-05-15 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(161,'Nedeljni sastanak sektora za razvoj','2026-05-22 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(162,'Nedeljni sastanak sektora za razvoj','2026-05-29 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(163,'Nedeljni sastanak sektora za razvoj','2026-06-05 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(164,'Nedeljni sastanak sektora za razvoj','2026-06-12 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(165,'Nedeljni sastanak sektora za razvoj','2026-06-19 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(166,'Nedeljni sastanak sektora za razvoj','2026-06-26 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(167,'Nedeljni sastanak sektora za razvoj','2026-07-03 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(168,'Nedeljni sastanak sektora za razvoj','2026-07-10 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(169,'Nedeljni sastanak sektora za razvoj','2026-07-17 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(170,'Nedeljni sastanak sektora za razvoj','2026-07-24 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(171,'Nedeljni sastanak sektora za razvoj','2026-07-31 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(172,'Nedeljni sastanak sektora za razvoj','2026-08-07 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(173,'Nedeljni sastanak sektora za razvoj','2026-08-14 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(174,'Nedeljni sastanak sektora za razvoj','2026-08-21 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(175,'Nedeljni sastanak sektora za razvoj','2026-08-28 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(176,'Nedeljni sastanak sektora za razvoj','2026-09-04 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(177,'Nedeljni sastanak sektora za razvoj','2026-09-11 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(178,'Nedeljni sastanak sektora za razvoj','2026-09-18 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(179,'Nedeljni sastanak sektora za razvoj','2026-09-25 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(180,'Nedeljni sastanak sektora za razvoj','2026-10-02 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(181,'Nedeljni sastanak sektora za razvoj','2026-10-09 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(182,'Nedeljni sastanak sektora za razvoj','2026-10-16 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(183,'Nedeljni sastanak sektora za razvoj','2026-10-23 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(184,'Nedeljni sastanak sektora za razvoj','2026-10-30 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(185,'Nedeljni sastanak sektora za razvoj','2026-11-06 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(186,'Nedeljni sastanak sektora za razvoj','2026-11-13 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(187,'Nedeljni sastanak sektora za razvoj','2026-11-20 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(188,'Nedeljni sastanak sektora za razvoj','2026-11-27 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(189,'Nedeljni sastanak sektora za razvoj','2026-12-04 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(190,'Nedeljni sastanak sektora za razvoj','2026-12-11 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(191,'Nedeljni sastanak sektora za razvoj','2026-12-18 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL),
+(192,'Nedeljni sastanak sektora za razvoj','2026-12-25 10:00:00',6,13,14,1,'Sala 3','STALNI','ZAKAZAN',NULL,NULL,NULL,NULL,NULL,'NEDELJNI',NULL);
 
 /*Table structure for table `sastanak_ucesnik` */
 
 DROP TABLE IF EXISTS `sastanak_ucesnik`;
 
 CREATE TABLE `sastanak_ucesnik` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `sastanak_id` int(11) NOT NULL,
-  `korisnik_id` int(11) DEFAULT NULL,
-  `spoljni_ucesnik_id` int(11) DEFAULT NULL,
-  `planiran` tinyint(1) NOT NULL DEFAULT 1,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sastanak_id` int NOT NULL,
+  `korisnik_id` int DEFAULT NULL,
+  `spoljni_ucesnik_id` int DEFAULT NULL,
+  `planiran` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `sastanak_id` (`sastanak_id`),
   KEY `korisnik_id` (`korisnik_id`),
@@ -503,7 +574,7 @@ CREATE TABLE `sastanak_ucesnik` (
   CONSTRAINT `sastanak_ucesnik_ibfk_1` FOREIGN KEY (`sastanak_id`) REFERENCES `sastanak` (`id`) ON DELETE CASCADE,
   CONSTRAINT `sastanak_ucesnik_ibfk_2` FOREIGN KEY (`korisnik_id`) REFERENCES `korisnik` (`id`),
   CONSTRAINT `sastanak_ucesnik_ibfk_3` FOREIGN KEY (`spoljni_ucesnik_id`) REFERENCES `spoljni_ucesnik` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `sastanak_ucesnik` */
 
@@ -552,19 +623,37 @@ insert  into `sastanak_ucesnik`(`id`,`sastanak_id`,`korisnik_id`,`spoljni_ucesni
 (47,156,22,NULL,1),
 (48,157,14,NULL,1),
 (49,157,15,NULL,1),
-(50,157,22,NULL,1);
+(50,157,22,NULL,1),
+(51,158,14,NULL,1),
+(52,158,15,NULL,1),
+(53,158,17,NULL,1),
+(54,159,14,NULL,1),
+(55,159,15,NULL,1),
+(56,159,17,NULL,1),
+(57,160,14,NULL,1),
+(58,160,15,NULL,1),
+(59,160,17,NULL,1),
+(60,161,14,NULL,1),
+(61,161,15,NULL,1),
+(62,161,17,NULL,1),
+(63,162,14,NULL,1),
+(64,162,15,NULL,1),
+(65,162,17,NULL,1),
+(66,171,14,NULL,1),
+(67,171,15,NULL,1),
+(68,171,17,NULL,1);
 
 /*Table structure for table `spoljni_ucesnik` */
 
 DROP TABLE IF EXISTS `spoljni_ucesnik`;
 
 CREATE TABLE `spoljni_ucesnik` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ime` varchar(100) NOT NULL,
-  `prezime` varchar(100) NOT NULL,
-  `radno_mesto` varchar(150) DEFAULT NULL,
-  `organizacija` varchar(150) DEFAULT NULL,
-  `zemlja` varchar(100) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `ime` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `prezime` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `radno_mesto` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `organizacija` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `zemlja` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -575,14 +664,14 @@ CREATE TABLE `spoljni_ucesnik` (
 DROP TABLE IF EXISTS `tacka_dnevnog_reda`;
 
 CREATE TABLE `tacka_dnevnog_reda` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `sastanak_id` int(11) NOT NULL,
-  `redni_broj` int(11) NOT NULL,
-  `sadrzaj` varchar(500) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sastanak_id` int NOT NULL,
+  `redni_broj` int NOT NULL,
+  `sadrzaj` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sastanak_id` (`sastanak_id`,`redni_broj`),
   CONSTRAINT `tacka_dnevnog_reda_ibfk_1` FOREIGN KEY (`sastanak_id`) REFERENCES `sastanak` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=448 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=518 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `tacka_dnevnog_reda` */
 
@@ -976,15 +1065,85 @@ insert  into `tacka_dnevnog_reda`(`id`,`sastanak_id`,`redni_broj`,`sadrzaj`) val
 (444,156,1,'Specifikacija potrebne opreme'),
 (445,156,2,'Odabir dobavljača'),
 (446,156,3,'Rok isporuke'),
-(447,157,1,'Tacka 1');
+(447,157,1,'Tacka 1'),
+(448,158,1,'Pregled napretka tekućih zadataka'),
+(449,158,2,'Plan aktivnosti za narednu nedelju'),
+(450,159,1,'Pregled napretka tekućih zadataka'),
+(451,159,2,'Plan aktivnosti za narednu nedelju'),
+(452,160,1,'Pregled napretka tekućih zadataka'),
+(453,160,2,'Plan aktivnosti za narednu nedelju'),
+(454,161,1,'Pregled napretka tekućih zadataka'),
+(455,161,2,'Plan aktivnosti za narednu nedelju'),
+(456,162,1,'Pregled napretka tekućih zadataka'),
+(457,162,2,'Plan aktivnosti za narednu nedelju'),
+(458,163,1,'Pregled napretka tekućih zadataka'),
+(459,163,2,'Plan aktivnosti za narednu nedelju'),
+(460,164,1,'Pregled napretka tekućih zadataka'),
+(461,164,2,'Plan aktivnosti za narednu nedelju'),
+(462,165,1,'Pregled napretka tekućih zadataka'),
+(463,165,2,'Plan aktivnosti za narednu nedelju'),
+(464,166,1,'Pregled napretka tekućih zadataka'),
+(465,166,2,'Plan aktivnosti za narednu nedelju'),
+(466,167,1,'Pregled napretka tekućih zadataka'),
+(467,167,2,'Plan aktivnosti za narednu nedelju'),
+(468,168,1,'Pregled napretka tekućih zadataka'),
+(469,168,2,'Plan aktivnosti za narednu nedelju'),
+(470,169,1,'Pregled napretka tekućih zadataka'),
+(471,169,2,'Plan aktivnosti za narednu nedelju'),
+(472,170,1,'Pregled napretka tekućih zadataka'),
+(473,170,2,'Plan aktivnosti za narednu nedelju'),
+(474,171,1,'Pregled napretka tekućih zadataka'),
+(475,171,2,'Plan aktivnosti za narednu nedelju'),
+(476,172,1,'Pregled napretka tekućih zadataka'),
+(477,172,2,'Plan aktivnosti za narednu nedelju'),
+(478,173,1,'Pregled napretka tekućih zadataka'),
+(479,173,2,'Plan aktivnosti za narednu nedelju'),
+(480,174,1,'Pregled napretka tekućih zadataka'),
+(481,174,2,'Plan aktivnosti za narednu nedelju'),
+(482,175,1,'Pregled napretka tekućih zadataka'),
+(483,175,2,'Plan aktivnosti za narednu nedelju'),
+(484,176,1,'Pregled napretka tekućih zadataka'),
+(485,176,2,'Plan aktivnosti za narednu nedelju'),
+(486,177,1,'Pregled napretka tekućih zadataka'),
+(487,177,2,'Plan aktivnosti za narednu nedelju'),
+(488,178,1,'Pregled napretka tekućih zadataka'),
+(489,178,2,'Plan aktivnosti za narednu nedelju'),
+(490,179,1,'Pregled napretka tekućih zadataka'),
+(491,179,2,'Plan aktivnosti za narednu nedelju'),
+(492,180,1,'Pregled napretka tekućih zadataka'),
+(493,180,2,'Plan aktivnosti za narednu nedelju'),
+(494,181,1,'Pregled napretka tekućih zadataka'),
+(495,181,2,'Plan aktivnosti za narednu nedelju'),
+(496,182,1,'Pregled napretka tekućih zadataka'),
+(497,182,2,'Plan aktivnosti za narednu nedelju'),
+(498,183,1,'Pregled napretka tekućih zadataka'),
+(499,183,2,'Plan aktivnosti za narednu nedelju'),
+(500,184,1,'Pregled napretka tekućih zadataka'),
+(501,184,2,'Plan aktivnosti za narednu nedelju'),
+(502,185,1,'Pregled napretka tekućih zadataka'),
+(503,185,2,'Plan aktivnosti za narednu nedelju'),
+(504,186,1,'Pregled napretka tekućih zadataka'),
+(505,186,2,'Plan aktivnosti za narednu nedelju'),
+(506,187,1,'Pregled napretka tekućih zadataka'),
+(507,187,2,'Plan aktivnosti za narednu nedelju'),
+(508,188,1,'Pregled napretka tekućih zadataka'),
+(509,188,2,'Plan aktivnosti za narednu nedelju'),
+(510,189,1,'Pregled napretka tekućih zadataka'),
+(511,189,2,'Plan aktivnosti za narednu nedelju'),
+(512,190,1,'Pregled napretka tekućih zadataka'),
+(513,190,2,'Plan aktivnosti za narednu nedelju'),
+(514,191,1,'Pregled napretka tekućih zadataka'),
+(515,191,2,'Plan aktivnosti za narednu nedelju'),
+(516,192,1,'Pregled napretka tekućih zadataka'),
+(517,192,2,'Plan aktivnosti za narednu nedelju');
 
 /*Table structure for table `uloga` */
 
 DROP TABLE IF EXISTS `uloga`;
 
 CREATE TABLE `uloga` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `naziv` varchar(50) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `naziv` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `naziv` (`naziv`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
