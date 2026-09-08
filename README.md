@@ -26,3 +26,8 @@ Aplikacija:
 - `is_sastanak.sql` — baza sa test podacima
 - `docker-compose.yml` — Docker konfiguracija
 - `dijagrami/` — UML dijagrami (use-case, kontekst, DFD, dekompozicija, struktura proizvoda)
+
+## Metodologija rada (Scrum)
+
+Projekat je vođen Scrum metodologijom kroz GitHub Projects.
+https://github.com/users/anamancevic/projects/1
