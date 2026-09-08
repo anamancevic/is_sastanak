@@ -167,7 +167,7 @@ function Ucesnici() {
                 </div>
                 <div className="korisnici-dugmad">
                     <button
-                        onClick={() => navigate("/dashboard")}
+                        onClick={() => navigate("/kalendar")}
                         className="dugme2">
                         Nazad
                     </button>

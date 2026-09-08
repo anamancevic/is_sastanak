@@ -382,4 +382,8 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
                 && !s.getDatumOdrzavanja().isAfter(sada))
                 .toList();
     }
+
+    public List<Sastanak> getSastanciSaUcesnicima() {
+        return sastanakRepository.findSastanciSaUcesnicima();
+    }
 }

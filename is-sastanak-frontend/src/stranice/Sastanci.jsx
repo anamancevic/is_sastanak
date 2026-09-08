@@ -114,189 +114,138 @@ function SastanakKartica({ sastanak }) {
 function Sastanci() {
     const navigate = useNavigate();
     const [celine, setCeline] = useState([]);
-    const [sastanci, setSastanci] = useState([]);
+    const [sviSastanci, setSviSastanci] = useState([]);  // SVI sastanci (učitani jednom)
     const [izabranaCelina, setIzabranaCelina] = useState("");
-
+    const [klasifikacija, setKlasifikacija] = useState("sve");
     const [strana, setStrana] = useState(0);
-    const [ukupnoStrana, setUkupnoStrana] = useState(0);
 
-    const [klasifikacija, setKlasifikacija] = useState("sve");//da li je sve, maticna ili druga
-
-    const[filtriraniSastanci, setFiltriraniSastanci] = useState([]);
     const velicinaStrane = 2;
 
     useEffect(() => {
-        async function ucitajCeline() {
+        async function ucitaj() {
             try {
                 const c = await fetch("http://localhost:8080/api/celine");
                 setCeline(await c.json());
+
+                const s = await fetch("http://localhost:8080/api/sastanci");
+                const podaci = await s.json();
+                // sortiraj po datumu
+                podaci.sort((a, b) => new Date(a.datumOdrzavanja) - new Date(b.datumOdrzavanja));
+                setSviSastanci(podaci);
             } catch (greska) {
-                console.log("Greska pri ucitavanju celina!");
+                console.log("Greska pri ucitavanju!");
             }
         }
-        ucitajCeline();
-        ucitajSastanke(0);  // prva strana sastanaka
+        ucitaj();
     }, []);
 
-    async function ucitajSastanke(brojStrane) {
-        try {
-            const odgovor = await fetch("http://localhost:8080/api/sastanci/stranica?strana=" + brojStrane + "&velicina=2");
-            const podaci = await odgovor.json();
-            setSastanci(podaci.content);
-            setUkupnoStrana(podaci.totalPages);
-            setStrana(brojStrane);
-        } catch (greska) {
-            console.log("Greska pri ucitavanju sastanaka!");
-        }
+    // filtriraj sve sastanke po celini + klasifikaciji (na frontu)
+    let filtrirani = sviSastanci;
+
+    // filter po organizacionoj celini
+    if (izabranaCelina !== "") {
+        filtrirani = filtrirani.filter((s) =>
+            s.organizacionaCelina && s.organizacionaCelina.id === parseInt(izabranaCelina)
+        );
     }
 
-    async function filtrirajPoCelini(celinaId) {
+    // filter po klasifikaciji (matična/druga)
+    if (klasifikacija !== "sve") {
+        filtrirani = filtrirani.filter((s) => {
+            if (!s.organizacionaCelina || !s.rukovodilac || !s.rukovodilac.organizacionaCelina) return false;
+            const istaCelina = s.organizacionaCelina.id === s.rukovodilac.organizacionaCelina.id;
+            return klasifikacija === "maticna" ? istaCelina : !istaCelina;
+        });
+    }
+
+    // paginacija (na frontu)
+    const ukupnoStrana = Math.ceil(filtrirani.length / velicinaStrane);
+    const pocetak = strana * velicinaStrane;
+    const sastanciZaPrikaz = filtrirani.slice(pocetak, pocetak + velicinaStrane);
+
+    // kad se promeni filter, vrati na prvu stranu
+    function promeniCelinu(celinaId) {
         setIzabranaCelina(celinaId);
-        try {
-            let url;
-            if (celinaId === "") {
-                url = "http://localhost:8080/api/sastanci";
-            }
-            else {
-                url = "http://localhost:8080/api/sastanci/celina/" + celinaId;
-            }
-            const odgovor = await fetch(url);
-            setSastanci(await odgovor.json());
-        } catch (greska) {
-            console.log("Greska pri filtriranju!");
-        }
+        setStrana(0);
     }
-
-    async function filtrirajKlasifikaciju(vrsta) {
+    function promeniKlasifikaciju(vrsta) {
         setKlasifikacija(vrsta);
         setStrana(0);
-        if (vrsta === "sve") {
-            setFiltriraniSastanci([]);
-            ucitajSastanke(0);//vraca klasicno na paginaciju
-            return;
-        }
-        //ucitava sve sastanke bez paginacije pa filtrira i onda tek paginacija
-        try {
-            const odgovor = await fetch("http://localhost:8080/api/sastanci");
-            const svi = await odgovor.json();
-
-            const filtrirani = svi.filter((s) => {
-                if (!s.organizacionaCelina || !s.rukovodilac || !s.rukovodilac.organizacionaCelina) {
-                    return false;
-                }
-                const istaCelina = s.organizacionaCelina.id === s.rukovodilac.organizacionaCelina.id;
-                return vrsta === "maticna" ? istaCelina : !istaCelina;
-            });
-            setFiltriraniSastanci(filtrirani);
-            setUkupnoStrana(Math.ceil(filtrirani.length/ velicinaStrane));
-        } catch (greska) {
-            console.log("Greska pri filtriranju klasifikacije!");
-        }
     }
-
-    /*Za filtriranje maticna/druga */
-    const pocetak = strana * velicinaStrane;
-    const kraj = pocetak + velicinaStrane;
-    const sastanciZaPrikaz = klasifikacija === "sve"
-                                ? sastanci : filtriraniSastanci.slice(pocetak, kraj);
 
     return (
         <div className="pozadina">
             <Meni />
             <div className="korisnici-sadrzaj">
-                <h2 className="naslov">
-                    Sastanci
-                </h2>
-                {/* Filtriranje prema org celini */}
+                <h2 className="naslov">Sastanci</h2>
+
+                {/* Filter po celini */}
                 <select
                     value={izabranaCelina}
-                    onChange={(e) => filtrirajPoCelini(e.target.value)}
+                    onChange={(e) => promeniCelinu(e.target.value)}
                     className="polje"
                     style={{ maxWidth: "300px" }}
                 >
                     <option value="">--Izaberi celinu--</option>
                     {celine.map((c) => (
-                        <option key={c.id} value={c.id}>
-                            {c.naziv}
-                        </option>
+                        <option key={c.id} value={c.id}>{c.naziv}</option>
                     ))}
                 </select>
-                {/* Filtriranje prema celini da li je maticna ili ne */}
+
+                {/* Klasifikacija */}
                 <div className="sastanci-filteri">
-                    <button
-                        onClick={() => filtrirajKlasifikaciju("sve")}
-                        className="dugme"
+                    <button onClick={() => promeniKlasifikaciju("sve")} className="dugme"
                         style={{
-                            width: "auto",
-                            padding: "8px 16px",
-                            marginTop: 0,
+                            width: "auto", padding: "8px 16px", marginTop: 0,
                             backgroundColor: klasifikacija === "sve" ? "#5b3f88" : "#8e7cab"
-                        }}
-                    >
+                        }}>
                         Sve
                     </button>
-                    <button
-                        onClick={() => filtrirajKlasifikaciju("maticna")}
-                        className="dugme"
+                    <button onClick={() => promeniKlasifikaciju("maticna")} className="dugme"
                         style={{
-                            width: "auto",
-                            padding: "8px 16px",
-                            marginTop: 0,
+                            width: "auto", padding: "8px 16px", marginTop: 0,
                             backgroundColor: klasifikacija === "maticna" ? "#5b3f88" : "#8e7cab"
-                        }}
-                    >
+                        }}>
                         Matična celina
                     </button>
-                    <button
-                        onClick={() => filtrirajKlasifikaciju("druga")}
-                        className="dugme"
+                    <button onClick={() => promeniKlasifikaciju("druga")} className="dugme"
                         style={{
-                            width: "auto",
-                            padding: "8px 16px",
-                            marginTop: 0,
+                            width: "auto", padding: "8px 16px", marginTop: 0,
                             backgroundColor: klasifikacija === "druga" ? "#5b3f88" : "#8e7cab"
-                        }}
-                    >
+                        }}>
                         Druga celina
                     </button>
                 </div>
+
+                {/* Lista */}
                 <div className="sastanci-lista">
-                    {sastanciZaPrikaz.map((s) => (
-                        <SastanakKartica key={s.id} sastanak={s} />
-                    ))}
+                    {sastanciZaPrikaz.length === 0 ? (
+                        <p className="tekst">Nema sastanaka.</p>
+                    ) : (
+                        sastanciZaPrikaz.map((s) => (
+                            <SastanakKartica key={s.id} sastanak={s} />
+                        ))
+                    )}
                 </div>
+
+                {/* Paginacija */}
                 <div className="sastanci-paginacija">
-                    <button
-                        onClick={() => ucitajSastanke(strana - 1)}
-                        disabled={strana === 0}
-                        className="dugme"
-                        style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}
-                    >
+                    <button onClick={() => setStrana(strana - 1)} disabled={strana === 0}
+                        className="dugme" style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}>
                         Prethodna
                     </button>
-                    <span>
-                        Strana {strana + 1} od {ukupnoStrana}
-                    </span>
-                    <button
-                        onClick={() => ucitajSastanke(strana + 1)}
-                        disabled={strana >= ukupnoStrana - 1}
-                        className="dugme"
-                        style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}
-                    >
+                    <span> Strana {ukupnoStrana === 0 ? 0 : strana + 1} od {ukupnoStrana} </span>
+                    <button onClick={() => setStrana(strana + 1)} disabled={strana >= ukupnoStrana - 1}
+                        className="dugme" style={{ width: "auto", padding: "8px 16px", marginTop: 0 }}>
                         Sledeća
                     </button>
                 </div>
+
                 <div className="korisnici-dugmad">
-                    <button
-                        onClick={() => navigate("/dashboard")}
-                        className="dugme"
-                    >
-                        Nazad
-                    </button>
+                    <button onClick={() => navigate("/dashboard")} className="dugme">Nazad</button>
                 </div>
             </div>
         </div>
     );
 }
-
 export default Sastanci;

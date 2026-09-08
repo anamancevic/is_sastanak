@@ -89,4 +89,8 @@ public class SastanakController {
                                         @RequestParam(defaultValue = "godina") String period){
         return sastanakService.getMojeUcesce(korisnickoIme, period);
     }
+    @GetMapping("/sa-ucesnicima")
+    public List<Sastanak> getSastanciSaUcesnicima() {
+        return sastanakService.getSastanciSaUcesnicima();
+    }
 }

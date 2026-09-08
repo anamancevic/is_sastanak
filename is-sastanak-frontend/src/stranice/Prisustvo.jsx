@@ -15,7 +15,7 @@ function Prisustvo() {
     useEffect(() => {
         async function ucitaj() {
             try {
-                const s = await fetch("http://localhost:8080/api/sastanci");
+                const s = await fetch("http://localhost:8080/api/sastanci/sa-ucesnicima");
                 setSastanci(await s.json());
             } catch (greska) {
                 console.log("Greska pri ucitavanju!");
@@ -187,7 +187,7 @@ function Prisustvo() {
                 </div>
                 <div className="korisnici-dugmad">
                     <button
-                        onClick={() => navigate("/dashboard")}
+                        onClick={() => navigate("/kalendar")}
                         className="dugme2">
                         Nazad
                     </button>

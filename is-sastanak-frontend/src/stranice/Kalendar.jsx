@@ -151,10 +151,15 @@ function Kalendar() {
                     </div>
                 </div>
                 <div className="korisnici-dugmad">
+                    <button onClick={()=> navigate("/prisustvo")} className="dugme">
+                        Evidentiraj prisustva
+                    </button>
+                    <button onClick={()=> navigate("/ucesnici")} className="dugme">
+                        Unesite učesnike sastanka
+                    </button>
                     <button
                         onClick={() => navigate("/dashboard")}
-                        className="dugme"
-                    >
+                        className="dugme">
                         Nazad
                     </button>
                 </div>

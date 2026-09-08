@@ -67,7 +67,7 @@ function Meni() {
                         className="meni-stavka"
                         onClick={() => idiNa("/korisnici")}
                     >
-                        Upravljanje korisnicima
+                        Registracija korisnika
                     </div>
                 }
 
@@ -88,7 +88,7 @@ function Meni() {
                     className="meni-stavka"
                     onClick={() => idiNa("/sastanci")}
                 >
-                    Sastanci
+                    Pregled sastanaka
                 </div>
 
 
@@ -126,29 +126,6 @@ function Meni() {
                         Zakaži sastanak
                     </div>
                 }
-
-
-                {/* Učesnici sastanka */}
-                {(jeAdmin || jeRukovodilac) &&
-                    <div
-                        className="meni-stavka"
-                        onClick={() => idiNa("/ucesnici")}
-                    >
-                        Učesnici sastanka
-                    </div>
-                }
-
-
-                {/* Evidentiranje prisustva */}
-                {(jeAdmin || jeRukovodilac || jeZapisnicar) &&
-                    <div
-                        className="meni-stavka"
-                        onClick={() => idiNa("/prisustvo")}
-                    >
-                        Evidentiranje prisustva
-                    </div>
-                }
-
 
                 {/* Predlozi */}
                 {(jeAdmin || jeZapisnicar) &&

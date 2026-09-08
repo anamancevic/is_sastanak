@@ -105,7 +105,7 @@ function Korisnici() {
             <Meni />
             <div className="korisnici-sadrzaj">
                 <h2 className="naslov">
-                    Upravljanje korisnicima
+                    Registracija korisnika
                 </h2>
                 <div className="korisnici-forma">
                     <div>

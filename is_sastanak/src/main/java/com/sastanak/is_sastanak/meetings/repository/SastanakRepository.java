@@ -15,4 +15,7 @@ public interface SastanakRepository extends JpaRepository<Sastanak, Integer> {
             "OR s.zapisnicar.id = :korisnikId " +
             "OR su.korisnik.id = :korisnikId")
     List<Sastanak> findSastanciKorisnika(Integer korisnikId);
+
+    @Query("SELECT DISTINCT su.sastanak FROM SastanakUcesnik su")
+    List<Sastanak> findSastanciSaUcesnicima();
 }
