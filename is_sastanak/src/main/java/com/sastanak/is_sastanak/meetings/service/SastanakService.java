@@ -301,10 +301,14 @@ public Prisustvo evidentirajPrisustvo(PrisustvoZahtev zahtev){
         }else{
             odDatuma = danas.withDayOfYear(1).atStartOfDay();//od prvog januara te godine
         }
-
+        System.out.println("=== PERIOD: " + period + " ===");
+        System.out.println("odDatuma: " + odDatuma);
         //svi sumirani
         List<Object[]> rezultati = prisustvoRepository.brojUcescaOdDatuma(odDatuma);
+        System.out.println("Broj rezultata: " + rezultati.size());
         List<SumiraniOdgovor> lista = new ArrayList<>();
+
+
 
         for (Object[] red : rezultati){
             Integer korisnikId = (Integer) red[0];
